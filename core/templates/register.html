@@ -41,7 +41,6 @@
     let retypepassword = document.getElementById('retypepassword').value;
 
     var re = /\S+@\S+\.\S+/;
-    console.log(re.test(email))
 
     if (password !== retypepassword){
       error_logger.innerHTML = 'Password not match'
@@ -72,7 +71,7 @@
         },
       })
       .then(function (response) {
-        window.location.reload();
+        window.location.href = '/login';
       })
       .catch(function (error) {
         if (error.response) {

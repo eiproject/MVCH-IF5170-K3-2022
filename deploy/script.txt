@@ -1,1 +1,1 @@
-git pull && sudo systemctl restart mvch && sudo systemctl rerestart nginx 
+git pull && sudo systemctl enable mvch && sudo systemctl restart mvch && sudo systemctl restart nginx 
