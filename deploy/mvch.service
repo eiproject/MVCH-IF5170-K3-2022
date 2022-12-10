@@ -1,0 +1,21 @@
+sudo nano /etc/systemd/system/mvch.service
+
+
+[Unit]
+Description=uWSGI instance to serve MVCH-IF5170-K3-2022
+After=network.target
+
+[Service]
+User=g23522050
+Group=www-data
+WorkingDirectory=/home/g23522050/MVCH-IF5170-K3-2022
+Environment="PATH=/home/g23522050/MVCH-IF5170-K3-2022/venv/bin"
+ExecStart=/home/g23522050/MVCH-IF5170-K3-2022/venv/bin/uwsgi --ini mvch.ini
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl start mvch
+sudo systemctl enable mvch
+
+sudo systemctl status mvch
