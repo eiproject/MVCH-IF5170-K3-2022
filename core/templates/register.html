@@ -10,15 +10,17 @@
       <p class="text-xl font-bold">Make Your Account Here</p>
       
       <p class="mt-2">Email</p>
-      <input type="email" class='w-full py-1 bg-transparent border-b-2 border-white' placeholder="Insert Your Email"/>
+      <input id="email" type="email" class='w-full py-1 bg-transparent border-b-2 border-white' placeholder="Insert Your Email"/>
 
       <p class="mt-2">Password</p>
-      <input type="password" class='w-full py-1 bg-transparent border-b-2 border-white' placeholder="Insert Your Password"/>
+      <input id="password" type="password" class='w-full py-1 bg-transparent border-b-2 border-white' placeholder="Insert Your Password"/>
 
       <p class="mt-2">Retype Password</p>
-      <input type="password" class='w-full py-1 bg-transparent border-b-2 border-white' placeholder="Insert Your Retype Password"/>
+      <input id="retypepassword" type="password" class='w-full py-1 bg-transparent border-b-2 border-white' placeholder="Insert Your Retype Password"/>
 
-      <button class="bg-blue_light hover:bg-blue_dark duration-500 w-full py-2">Register</button>
+      <p id="error-log" class="text-xs text-red-500 hidden">ERR</p>
+
+      <button onclick="doRegisterUser()" class="bg-blue_light hover:bg-blue_dark duration-500 w-full py-2">Register</button>
     </div>
   </div>
 </section>
@@ -29,10 +31,33 @@
   integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g=="
   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-  function doLoginUser() {
+  function doRegisterUser() {
+    let error_logger = document.getElementById('error-log');
+    error_logger.classList.add('hidden')
+
     let email = document.getElementById('email').value;
+    
     let password = document.getElementById('password').value;
-    let error_logger = document.getElementById('error-log-pw');
+    let retypepassword = document.getElementById('retypepassword').value;
+
+    var re = /\S+@\S+\.\S+/;
+    console.log(re.test(email))
+
+    if (password !== retypepassword){
+      error_logger.innerHTML = 'Password not match'
+      error_logger.classList.remove('hidden')
+      return 
+    }
+    else if (re.test(email) === false){
+      error_logger.innerHTML = 'Invalid email address'
+      error_logger.classList.remove('hidden')
+      return 
+    }
+    else if (password.length < 8){
+      error_logger.innerHTML = 'Password at least 8 character'
+      error_logger.classList.remove('hidden')
+      return 
+    }
 
     var bodyFormData = new FormData();
     bodyFormData.append('email', email);
@@ -40,14 +65,15 @@
 
     axios({
         method: "post",
-        url: window.location.origin + '/api/user-login',
+        url: window.location.origin + '/api/user-register',
         data: bodyFormData,
         headers: {
           "Content-Type": "multipart/form-data"
         },
       })
       .then(function (response) {
-        window.location.href = "/application";
+        // window.location.href = "/application";
+        console.log(response)
       })
       .catch(function (error) {
         if (error.response) {

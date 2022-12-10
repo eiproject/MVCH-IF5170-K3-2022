@@ -10,10 +10,10 @@
       <p class="text-xl font-bold">Login with Your Account</p>
       
       <p class="mt-2">Email</p>
-      <input type="email" class='w-full py-1 bg-transparent border-b-2 border-white' placeholder="Insert Your Email"/>
+      <input id="email" type="email" class='w-full py-1 bg-transparent border-b-2 border-white' placeholder="Insert Your Email"/>
 
       <p class="mt-2">Password</p>
-      <input type="password" class='w-full py-1 bg-transparent border-b-2 border-white' placeholder="Insert Your Password"/>
+      <input id="password" type="password" class='w-full py-1 bg-transparent border-b-2 border-white' placeholder="Insert Your Password"/>
       
       <div class="flex mt-2">
         <input type="checkbox">
@@ -21,7 +21,9 @@
       </div>
       <p class="font-bold cursor-pointer my-2">Forget Password</p>
 
-      <button class="bg-blue_light hover:bg-blue_dark duration-500 w-full py-2">Login</button>
+      <p id="error-log" class="text-xs text-red-500 hidden">ERR</p>
+
+      <button onclick="doLoginUser()" class="bg-blue_light hover:bg-blue_dark duration-500 w-full py-2">Login</button>
     </div>
   </div>
 </section>
@@ -35,7 +37,7 @@
   function doLoginUser() {
     let email = document.getElementById('email').value;
     let password = document.getElementById('password').value;
-    let error_logger = document.getElementById('error-log-pw');
+    let error_logger = document.getElementById('error-log');
 
     var bodyFormData = new FormData();
     bodyFormData.append('email', email);
@@ -50,7 +52,8 @@
         },
       })
       .then(function (response) {
-        window.location.href = "/application";
+        // window.location.href = "/application";
+        console.log(response)
       })
       .catch(function (error) {
         if (error.response) {

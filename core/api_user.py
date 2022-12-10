@@ -1,34 +1,29 @@
 from hashlib import sha256
 from http import HTTPStatus
 from flask import jsonify, request, session
-from . import app, db, BASE_DIR
-from .models import Users
-
+from . import app, db, BASE_DIR, region
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+
 
 @app.route("/api/user-register", methods=["POST"])
 def register():
     code = HTTPStatus.OK
     message = "OK"
-    email, password, retypepassword = request.form.get('email'), \
-                                    request.form.get('password'), \
-                                    request.form.get('retypepassword')
-    if (Users.query.filter_by(email=email).first()):
+    email, password = request.form.get('email'), request.form.get('password')
+
+    is_email_exists = db.hget(email, 'password')
+
+    if (is_email_exists):
         code = HTTPStatus.BAD_REQUEST
         message = "User already registered."
     else:        
-        if (password != retypepassword):
-            code = HTTPStatus.BAD_REQUEST
-            message = "Password not match."
-        else:
-            hashed_pw = sha256(password.encode('utf-8')).hexdigest()
-            query_new_user = Users(
-                        email=email,
-                        password_hash= hashed_pw
-                    )
-            db.session.add(query_new_user)
-            db.session.commit()
-
+        hashed_pw = sha256(password.encode('utf-8')).hexdigest()
+        db.hset(name=email, mapping={
+            'password': hashed_pw,
+            'user_type': 'patient',
+            'region': region,
+        })
+            
     json_return = {
         "code": code,
         "data": email,
@@ -42,18 +37,20 @@ def login():
     code = HTTPStatus.OK
     message = "OK"
     jwt_token = None
-    email, password = request.form.get('email'), \
-                                    request.form.get('password')
+    email, password = request.form.get('email'), request.form.get('password')
 
-    check_user = Users.query.filter_by(email=email).first()
-    if (not check_user):
+    is_email_exists = db.hget(email, 'password')
+
+    if (not is_email_exists):
         code = HTTPStatus.BAD_REQUEST
-        message = "Login failed (1)."
-    else:   
-        hash = sha256(password.encode('utf-8')).hexdigest()     
-        if (hash != check_user.password_hash):
+        message = "User not registered."
+    else:
+        stored_hash = is_email_exists.decode("utf-8") 
+        input_hash = sha256(password.encode('utf-8')).hexdigest()
+        
+        if (stored_hash != input_hash):
             code = HTTPStatus.BAD_REQUEST
-            message = "Login failed (2)."
+            message = "Wrong password."
         else:
             message = "Login OK"
 
