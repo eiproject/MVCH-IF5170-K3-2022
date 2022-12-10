@@ -1,0 +1,30 @@
+{
+  "name": "flask-tailwind",
+  "version": "1.0.0",
+  "description": "Python Flask and Tailwind CSS Initial Projects",
+  "main": "tailwind.config.js",
+  "dependencies": {
+    "autoprefixer": "^10.3.6",
+    "postcss": "^8.3.8",
+    "tailwind": "^4.0.0",
+    "tailwindcss": "^2.2.16"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eiproject/Flask-Tailwind-Initial-Project.git"
+  },
+  "keywords": [
+    "flask",
+    "tailwind"
+  ],
+  "author": "M Razif Rizqullah (eiproject)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eiproject/Flask-Tailwind-Initial-Project/issues"
+  },
+  "homepage": "https://github.com/eiproject/Flask-Tailwind-Initial-Project#readme"
+}

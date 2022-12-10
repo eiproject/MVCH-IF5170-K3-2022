@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+{% block body %}
+<section class="section section-lg flex flex-col h-screen ">
+  <div class="m-auto w-screen">
+    <div class="font-black text-4xl text-center">
+      <span class="text-gray-900">Register</span>
+    </div>
+    <div>
+      <div class="text-center flex justify-center">
+        <div class="form-group mt-10 text-gray-900">
+          <p class="border-t py-2">Email</p>
+          <input id="email" name="email" type="email" class="appearance-none block w-full bg-gray-200 text-gray-700 border 
+            border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            placeholder="Your email" required>
+        </div>
+      </div>
+
+      <div class="text-center flex justify-center">
+        <div class="form-group text-gray-900">
+          <p class="py-2">Password</p>
+          <input id="password" type="password" class="appearance-none block w-full bg-gray-200 text-gray-700 border 
+          border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            placeholder="Your password" minlength="8" required>
+        </div>
+      </div>
+
+      <div class="text-center flex justify-center">
+        <div class="form-group text-gray-900">
+          <p class="py-2">Retype Password</p>
+          <input id="retype-password" type="password" class="appearance-none block w-full bg-gray-200 text-gray-700 border 
+            border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            placeholder="Retype your password" minlength="8" required>
+        </div>
+      </div>
+      <div class="text-center flex justify-center">
+        <p id="error-log-pw" class="text-red-500 text-sm italic hidden"></p>
+      </div>
+      <div class="text-center flex justify-center">
+        <div class="">
+          <div>
+            <div class="mt-4">
+              <button class="shadow bg-green-500 hover:bg-green-600 focus:shadow-outline 
+              focus:outline-none text-white font-bold py-2 px-4 rounded duration-500" type="button"
+                onclick="doRegisterUser();" type="submit">
+                Register
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center flex justify-center mt-2">
+        <small>Already have account? <a href="/login"><b>login here</b></a>.</small>
+      </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js"
+  integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  function validateEmail(email) {
+    const re =
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
+
+  function doRegisterUser() {
+    let email = document.getElementById('email').value;
+    let password = document.getElementById('password').value;
+    let re_password = document.getElementById('retype-password').value;
+    let error_logger = document.getElementById('error-log-pw');
+    console.log(validateEmail());
+    if (email === "") {
+      error_logger.classList.remove('hidden');
+      error_logger.innerHTML = "Email required.";
+      return;
+    } else if (password === "" || re_password === "") {
+      error_logger.classList.remove('hidden');
+      error_logger.innerHTML = "Password required.";
+      return;
+    } else if (password < 8 || re_password < 8) {
+      error_logger.classList.remove('hidden');
+      error_logger.innerHTML = "Password should not less than 8 characters.";
+      return;
+    } else if (password !== re_password) {
+      error_logger.classList.remove('hidden');
+      error_logger.innerHTML = "Password do not match.";
+      return;
+    } else if (!validateEmail(email)) {
+      error_logger.classList.remove('hidden');
+      error_logger.innerHTML = "Email not valid.";
+      return;
+    } else {
+      error_logger.classList.add('hidden');
+
+      var bodyFormData = new FormData();
+      bodyFormData.append('email', email);
+      bodyFormData.append('password', password);
+      bodyFormData.append('retypepassword', re_password);
+
+      console.log('bodyFormData', bodyFormData.get('email'))
+      //...
+      axios({
+          method: "post",
+          url: window.location.origin + '/api/user-register',
+          data: bodyFormData,
+          headers: {
+            "Content-Type": "multipart/form-data"
+          },
+        })
+        .then(function (response) {
+          window.location.href = "/login";
+        })
+        .catch(function (error) {
+          if (error.response) {
+            if (error.response.status === 400) {
+              error_logger.classList.remove('hidden');
+              error_logger.innerHTML = "Email already exists.";
+            }
+          }
+        });
+    }
+  }
+</script>
+{% endblock %}
