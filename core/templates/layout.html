@@ -29,32 +29,31 @@
           </a>
         </div>
         <ul class="list-reset flex justify-between flex-1 md:flex-none items-end">
+          {% if EMAIL %}
           <li class="mx-1">
-            <button class="bg-white hover:bg-gray-100 focus:outline-none py-4 px-6 rounded-full duration-500" type="button"
+            <p class="py-4 px-6">
+              Welcome! <span class="italic">{{EMAIL}}</span>
+            </p>
+          </li>
+          {% endif %}
+          <li class="mx-1">
+            <button class="bg-white hover:bg-gray-100 py-4 px-6 rounded-full duration-500" type="button"
               onclick="window.location.href = '/'">
               Home
             </button>
           </li>
-          {% if isLoggedIn %}
-          <li class="text-gray-900 ml-4 py-2 border-b mr-8 text-center">
-            <p class="text-xs">Balance: </p>
-            <p class="font-bold">
-              Here Login
-            </p>
-          </li>
-          {% endif %}
           <li class="">
-            {% if isLoggedIn %}
-            <button class="bg-red-500 hover:bg-red-600 focus:outline-none py-4 px-6 rounded-full duration-500" type="button"
+            {% if EMAIL %}
+            <button class="bg-white hover:bg-gray-100 py-4 px-6 rounded-full duration-500 text-red-500" type="button"
               onclick="window.location.href = '/logout'">
               Logout
             </button>
             {% else %}
-            <button class="mx-1 bg-green_light hover:bg-green_dark focus:outline-none py-4 px-6 rounded-full duration-500" type="button"
+            <button class="mx-1 bg-green_light hover:bg-green_dark py-4 px-6 rounded-full duration-500" type="button"
               onclick="window.location.href = '/register'">
               Register
             </button>
-            <button class="mx-1 bg-blue_light hover:bg-blue_dark focus:outline-none py-4 px-6 rounded-full duration-500" type="button"
+            <button class="mx-1 bg-blue_light hover:bg-blue_dark py-4 px-6 rounded-full duration-500" type="button"
               onclick="window.location.href = '/login'">
               Login
             </button>

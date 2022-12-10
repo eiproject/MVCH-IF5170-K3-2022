@@ -53,7 +53,6 @@ def login():
             message = "Wrong password."
         else:
             message = "Login OK"
-
             jwt_token = create_access_token(identity=email)
             # store in session
             session['jwt'] = jwt_token
