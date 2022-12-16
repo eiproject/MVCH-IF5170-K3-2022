@@ -1,0 +1,48 @@
+{% extends "dashboard/layout.html" %}
+
+{% block content %}
+<div class="p-10 flex flex-col flex-grow">
+  <p class="font-bold text-2xl">Register Consultation</p>
+  <div class="bg-white rounded-xl border border-green_dark py-10 px-20 mt-4">
+    <p class="uppercase font-bold">Patient Data</p>
+    <div class="flex flex-col">
+      <div class="flex items-center my-2">
+        <p class="w-4/12">Patient Name</p>
+        <input id="pn" type="text" placeholder="Insert Patient Full Name" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+      </div>
+      <div class="flex items-center my-2">
+        <p class="w-4/12">Gender</p>
+        <select id="pg" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark">
+          <option value="" disabled selected>Select Patient Gender</option>
+          <option value="m">Male</option>
+          <option value="f">Female</option>
+        </select>
+      </div>
+      <div class="flex items-center my-2">
+        <p class="w-4/12">Age</p>
+        <input id="pag" type="text" placeholder="Insert Patient Age" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+      </div>
+      <div class="flex items-center my-2">
+        <p class="w-4/12">Address</p>
+        <input id="pad" type="text" placeholder="Insert Patient Address" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+      </div>
+      <div class="flex items-center my-2">
+        <p class="w-4/12">Phone Number</p>
+        <input id="ppn" type="text" placeholder="Insert Patient Phone Number" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+      </div>
+      
+      <div class="flex items-center my-2">
+        <button class="bg-green_light hover:bg-green_dark duration-500 px-4 py-2 rounded-xl border border-green_dark"
+          onclick="window.location.href='../dashboard/register-consultation'">
+          Submit
+        </button>
+      </div>
+    </div>
+
+  </div>
+  
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block head %}
+
+{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block body %}
+<body>
+  <div class="flex min-h-screen bg-green_dark">
+    <div id="sidebar" class="w-3/12 flex flex-col items-center justify-between">
+      <div class="my-20 flex flex-col justify-center items-center w-1/2">
+        <img src="{{url_for('static',filename='img/logo.svg')}}" width="120"/>
+        
+        <button class="bg-green_light px-8 py-4 rounded-xl my-20" onclick="window.location.href='/'">
+          Home
+        </button>
+        
+        <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
+          href="/dashboard/patient-registration">Register Teleconsultation</a>
+        <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
+          href="/dashboard/doctor-schedule">Doctor Schedule</a>
+        <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
+          href="/logout">Logout</a>
+      </div>
+      <div class="mb-10 flex flex-col w-1/2">
+        <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
+          href="/dashboard/history-consultation">My History</a>
+      </div>
+    </div>
+    <div id="rightbar" class="w-9/12 flex flex-col">
+      <div id="profile" class="bg-green_light mb-10 h-32 rounded-b-xl flex justify-between items-center px-10">
+        <div class="flex items-center">
+          <img src="{{url_for('static',filename='img/phone-tty.svg')}}" width="60"/>
+          <div class="ml-4">
+            <p>Hotline</p>
+            <p>0731-123321</p>
+          </div>
+        </div>
+        <div class="flex">
+          <div class="flex flex-col justify-end">
+            <p class="text-sm">PERSON FULL NAME</p>
+            <p class="text-xs">Patient</p>
+          </div>
+          <div class="ml-2">
+            <img src="https://cvhrma.org/wp-content/uploads/2015/07/default-profile-photo.jpg" class="w-10 rounded-md"/>
+          </div>
+        </div>
+      </div>
+      <div id="content" class="bg-green_light rounded-t-xl flex flex-grow flex-col">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+</body>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+{% block script %}{% endblock %}

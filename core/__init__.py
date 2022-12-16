@@ -40,4 +40,4 @@ bcrypt = Bcrypt(app)
 
 region = 'indo'
 
-from core import views, api_user
+from core import views, api_user, views_dashboard

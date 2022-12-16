@@ -1,6 +1,5 @@
 from core.util import get_session_mail
 from . import app, jwt, db
-# from .models import Users
 from flask import Flask, request, render_template, redirect, jsonify, session
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, decode_token
 
@@ -59,15 +58,3 @@ def logout():
     print("Logout works!")
     return redirect('/login')
 
-
-@app.route("/dashboard", methods=["GET"])
-def dashboard_view():
-    email = None
-    if 'jwt' in session:
-        email = get_session_mail()
-        if db.hgetall(email):
-            return render_template('dashboard.html', Name="Dashboard", EMAIL=email)
-        else:
-            return redirect('/logout')
-
-    

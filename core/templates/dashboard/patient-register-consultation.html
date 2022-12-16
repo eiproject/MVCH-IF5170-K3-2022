@@ -1,0 +1,59 @@
+{% extends "dashboard/layout.html" %}
+
+{% block content %}
+<div class="p-10 flex flex-col flex-grow">
+  <p class="font-bold text-2xl">Register Consultation</p>
+  <div class="bg-white rounded-xl border border-green_dark py-10 px-20 mt-4 flex-grow">
+    <div class="flex justify-between">
+      <div class="flex items-center my-2 w-5/12">
+        <p class="w-4/12">Search by Doctor</p>
+        <input id="bydoctor" type="text" placeholder="Search by doctor" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+      </div>
+      <div class="flex items-center my-2 w-5/12">
+        <p class="w-4/12">Search by Date</p>
+        <input id="bydate" type="date" placeholder="Search by date" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+      </div>
+    </div>
+
+    <div class="my-4 flex flex-col">
+      <table>
+        <tr class="border-b border-t border-green_dark">
+          <th class="py-2">Doctor</th>
+          <th>Speciality</th>
+          <th>Day</th>
+          <th>Time</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+        <tr>
+          <td>Doctor A</td>
+          <td>Speciality A</td>
+          <td class="text-center">Day A</td>
+          <td class="text-center">Time A</td>
+          <td class="text-center">Date A</td>
+          <td class="text-center">
+            <button class="bg-green_light rounded-xl px-4 py-2 hover:bg-green_dark duration-500 my-1">
+              Select
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>Doctor B</td>
+          <td>Speciality B</td>
+          <td class="text-center">Day B</td>
+          <td class="text-center">Time B</td>
+          <td class="text-center">Date B</td>
+          <td class="text-center">
+            <button class="bg-green_light rounded-xl px-4 py-2 hover:bg-green_dark duration-500 my-1">
+              Select
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
