@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block header %}
+<header>
+  <nav class="bg-white py-4 mt-0 w-full">
+    <div class="mx-10">
+      <div class="md:pt-0 md:content-center md:justify-between md:flex">
+        <div class="flex md:w-full justify-center md:justify-start text-gray-900">
+          <a class="text-gray-900 no-underline hover:text-gray-900 hover:no-underline" href="/">
+            <div class="flex items-center">
+              <img src="{{url_for('static',filename='img/logo.svg')}}" width="80" />
+              <span class="text-2xl pl-2 font-bold hidden">
+                <span class="">Mountain View Community Hospital
+                </span>
+            </div>
+          </a>
+        </div>
+        <ul class="list-reset flex justify-between flex-1 md:flex-none items-end">
+          {% if EMAIL %}
+          <li class="mx-1">
+            <p class="py-4 px-6">
+              Welcome! <span class="italic">{{EMAIL}}</span>
+            </p>
+          </li>
+          {% endif %}
+          <li class="mx-1">
+            <button class="bg-white hover:bg-gray-100 py-4 px-6 rounded-full duration-500" type="button"
+              onclick="window.location.href = '/'">
+              Home
+            </button>
+          </li>
+          <li class="">
+            {% if EMAIL %}
+            <button class="bg-white hover:bg-gray-100 py-4 px-6 rounded-full duration-500 text-red-500" type="button"
+              onclick="window.location.href = '/logout'">
+              Logout
+            </button>
+            {% else %}
+            <button class="mx-1 bg-green_light hover:bg-green_dark py-4 px-6 rounded-full duration-500" type="button"
+              onclick="window.location.href = '/register'">
+              Register
+            </button>
+            <button class="mx-1 bg-blue_light hover:bg-blue_dark py-4 px-6 rounded-full duration-500" type="button"
+              onclick="window.location.href = '/login'">
+              Login
+            </button>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+{% endblock %}
+
+<body class="text-black">
+  {% block body %}{% endblock %}
+</body>
+
+<footer class="flex justify-center items-center mt-20 mb-4">
+  {% block footer %}
+  <span>&copy; Copyright 2022 | Mountain View Community Hospital | Kelompok 3</span>
+  {% endblock %}
+</footer>
+
+{% block script %}{% endblock %}
