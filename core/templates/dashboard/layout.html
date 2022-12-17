@@ -12,14 +12,26 @@
       <div class="my-20 flex flex-col justify-center items-center w-1/2">
         <img src="{{url_for('static',filename='img/logo.svg')}}" width="120"/>
         
-        <button class="bg-green_light px-8 py-4 rounded-xl my-20" onclick="window.location.href='/'">
+        <button class="bg-green_light px-8 py-4 rounded-xl my-20" onclick="window.location.href='/dashboard'">
           Home
         </button>
-        
+        {% if USER_TYPE == 'patient'%}
         <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
           href="/dashboard/patient-registration">Register Teleconsultation</a>
         <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
           href="/dashboard/doctor-schedule">Doctor Schedule</a>
+        {% elif USER_TYPE == 'doctor'%}
+        <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
+          href="/dashboard/consultation-schedule">Teleconsultation Schedule</a>
+        <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
+          href="/dashboard/doctor-schedule">Doctor Schedule</a>
+        <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
+          href="/dashboard/patient-list">Patient</a>
+        {% elif USER_TYPE == 'nurse'%}
+        <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
+          href="/dashboard/nurse-schedule">Schedule</a>
+        {% endif %}
+
         <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
           href="/logout">Logout</a>
       </div>
@@ -40,7 +52,13 @@
         <div class="flex">
           <div class="flex flex-col justify-end">
             <p class="text-sm">PERSON FULL NAME</p>
+            {% if USER_TYPE == 'patient'%}
             <p class="text-xs">Patient</p>
+            {% elif USER_TYPE == 'doctor'%}
+            <p class="text-xs">Doctor</p>
+            {% elif USER_TYPE == 'nurse'%}
+            <p class="text-xs">Nurse</p>
+            {% endif %} 
           </div>
           <div class="ml-2">
             <img src="https://cvhrma.org/wp-content/uploads/2015/07/default-profile-photo.jpg" class="w-10 rounded-md"/>

@@ -1,0 +1,97 @@
+{% extends "dashboard/layout.html" %}
+
+{% block content %}
+<div class="p-10 flex flex-col flex-grow">
+  <p class="font-bold text-2xl">History Consultation</p>
+  <div class="bg-white rounded-xl border border-green_dark py-10 px-20 mt-4 flex-grow">
+    <div class="my-4 flex flex-col">
+      {% if USER_TYPE == 'patient' %}
+      <table>
+        <tr class="border-b border-t border-green_dark">
+          <th class="py-2">Doctor</th>
+          <th>Speciality</th>
+          <th>Day</th>
+          <th>Time</th>
+          <th>Date</th>
+          <th>Detail</th>
+        </tr>
+        <tr>
+          <td>Doctor A</td>
+          <td>Speciality A</td>
+          <td class="text-center">Day A</td>
+          <td class="text-center">Time A</td>
+          <td class="text-center">Date A</td>
+          <td class="text-center">Detail A</td>
+        </tr>
+        <tr>
+          <td>Doctor B</td>
+          <td>Speciality B</td>
+          <td class="text-center">Day B</td>
+          <td class="text-center">Time B</td>
+          <td class="text-center">Date B</td>
+          <td class="text-center">Detail B</td>
+        </tr>
+      </table>
+      {% elif USER_TYPE == 'doctor' %}
+      <table>
+        <tr class="border-b border-t border-green_dark">
+          <th class="py-2">No</th>
+          <th>Date</th>
+          <th>Day</th>
+          <th>Time</th>
+          <th>Detail</th>
+        </tr>
+        <tr>
+          <td class="text-center">1</td>
+          <td class="text-center">Date A</td>
+          <td class="text-center">Day A</td>
+          <td class="text-center">Time A</td>
+          <td>Detail A</td>
+        </tr>
+        <tr>
+          <td class="text-center">2</td>
+          <td class="text-center">Date B</td>
+          <td class="text-center">Day B</td>
+          <td class="text-center">Time B</td>
+          <td>Detail B</td>
+        </tr>
+      </table>
+      
+      {% elif USER_TYPE == 'nurse' %}
+      <table>
+        <tr class="border-b border-t border-green_dark">
+          <th class="py-2">No</th>
+          <th>Doctor</th>
+          <th>Day</th>
+          <th>Date</th>
+          <th>Time</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>
+            <p class="font-bold">Doctor A</p>
+            <p class="text-xs">Speciality A</p>
+          </td>
+          <td class="text-center">Day A</td>
+          <td class="text-center">Date A</td>
+          <td class="text-center">Time A</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>
+            <p class="font-bold">Doctor B</p>
+            <p class="text-xs">Speciality B</p>
+          </td>
+          <td class="text-center">Day B</td>
+          <td class="text-center">Date B</td>
+          <td class="text-center">Time B</td>
+        </tr>
+      </table>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

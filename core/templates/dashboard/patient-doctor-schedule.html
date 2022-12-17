@@ -5,13 +5,19 @@
   <p class="font-bold text-2xl">Doctor Schedule</p>
   <div class="bg-white rounded-xl border border-green_dark py-10 px-20 mt-4 flex-grow">
     <div class="my-4 flex flex-col">
+      {% if USER_TYPE == 'patient' %}
       <div class="flex items-center my-2 w-5/12">
         <p class="w-4/12">Search Doctor</p>
         <input id="doctor_name" type="text" placeholder="Input Doctor Name" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
       </div>
+      {% endif %}
       <div class="flex justify-between">
-        <p class="mb-2">Doctor: <b>DOCTOR NAME</b></p>
-        <p>This week schedule</p>
+        <p class="mb-2">
+          {% if USER_TYPE == 'patient' %}
+          Doctor: <b>DOCTOR NAME</b>
+          {% endif %}
+        </p>
+        <p>MONTH/YEAR schedule</p>
       </div>
       <table class="text-sm">
         <tr class="border-b border-t border-green_dark">

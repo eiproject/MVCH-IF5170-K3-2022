@@ -1,0 +1,37 @@
+{% extends "dashboard/layout.html" %}
+
+{% block content %}
+<div class="p-10 flex flex-col flex-grow">
+  <p class="font-bold text-2xl">Patient List</p>
+  <div class="bg-white rounded-xl border border-green_dark py-10 px-20 mt-4 flex-grow">
+    <div class="my-4 flex flex-col">
+      <table class="text-sm">
+        <tr class="border-b border-t border-green_dark">
+          <th class="py-2">No</th>
+          <th>Patient</th>
+          <th>Day</th>
+          <th>Date</th>
+          <th>Time</th>
+        </tr>
+        <tr class="h-10">
+          <td>1</td>
+          <td>Patient A</td>
+          <td class="text-center">Day a</td>
+          <td class="text-center">date a</td>
+          <td class="text-center">time a</td>
+        </tr>
+        <tr class="h-10">
+          <td>2</td>
+          <td>Patient A</td>
+          <td class="text-center">Day a</td>
+          <td class="text-center">date a</td>
+          <td class="text-center">time a</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

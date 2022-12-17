@@ -1,0 +1,39 @@
+{% extends "dashboard/layout.html" %}
+
+{% block content %}
+<div class="p-10 flex flex-col flex-grow">
+  <p>Hello</p>
+  <p class="font-bold text-2xl">Welcome, NAME</p>
+  <div class="flex flex-grow">
+    <div class="mr-2 flex flex-col flex-grow">
+      <div class="flex justify-center bg-white rounded-xl border border-green_dark p-2 mb-2">
+        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500">
+          Schedule
+        </button>
+        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500">
+          History
+        </button>
+      </div>
+      <div class="flex flex-col bg-white rounded-xl border border-green_dark p-2 flex-grow">
+        <p class="font-bold">Nurse Schedule</p>
+        <div class="my-4 flex flex-col">
+          <div class="flex my-2 py-1 border-t border-b border-green_dark">
+            <div class="text-center w-2/12 text-xs">
+              <p>Day</p>
+              <p>MM-DD-YYYY</p>
+              <p>HH:MM</p>
+            </div>
+            <div class="w-10/12 pl-2 border-l border-green_dark">
+              <p class="font-bold">Doctor A</p>
+              <p>Speciality</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

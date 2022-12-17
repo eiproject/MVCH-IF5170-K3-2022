@@ -1,0 +1,73 @@
+{% extends "dashboard/layout.html" %}
+
+{% block content %}
+<div class="p-10 flex flex-col flex-grow">
+  <p class="font-bold text-2xl">Nurse Schedule</p>
+  <div class="bg-white rounded-xl border border-green_dark py-10 px-20 mt-4 flex-grow">
+    <div class="my-4 flex flex-col">
+      <div class="flex justify-between">
+        <p class="mb-2">
+          Nurse: <b>NURSE NAME</b>
+        </p>
+        <p>MONTH/YEAR schedule</p>
+      </div>
+      <table class="text-sm">
+        <tr class="border-b border-t border-green_dark">
+          <th class="py-2">Time</th>
+          <th>(11/19) Monday</th>
+          <th>(11/20) Tuesday</th>
+          <th>(11/21) Wednesday</th>
+          <th>(11/22) Thursday</th>
+          <th>(11/23) Friday</th>
+          <th>(11/24) Saturday</th>
+          <th>(11/25) Sunday</th>
+        </tr>
+        <tr class="text-center h-20">
+          <td class="border-b border-green_dark">07.00</td>
+          <td class="cursor-pointer border border-green_dark">
+            <p class="font-bold">Doctor Name, dr.</p>
+            <p class="text-xs">Speciality</p>
+          </td>
+          <td class="cursor-pointer border border-green_dark">
+            <p class="font-bold">Doctor Name, dr.</p>
+            <p class="text-xs">Speciality</p>
+          </td>
+          <td class="cursor-pointer border border-green_dark">
+            <p class="font-bold">Doctor Name, dr.</p>
+            <p class="text-xs">Speciality</p>
+          </td>
+          <td class="cursor-pointer border border-green_dark">
+            <p class="font-bold">Doctor Name, dr.</p>
+            <p class="text-xs">Speciality</p>
+          </td>
+          <td class="cursor-pointer border border-green_dark">
+            <p class="font-bold">Doctor Name, dr.</p>
+            <p class="text-xs">Speciality</p>
+          </td>
+          <td class="cursor-pointer border border-green_dark">
+            <p class="font-bold">Doctor Name, dr.</p>
+            <p class="text-xs">Speciality</p>
+          </td>
+          <td class="cursor-pointer border border-green_dark">
+            <p class="font-bold">Doctor Name, dr.</p>
+            <p class="text-xs">Speciality</p>
+          </td>
+        </tr>
+        <tr class="text-center h-10">
+          <td>08.00</td>
+          <td class="">-</td>
+          <td class="">-</td>
+          <td class="">-</td>
+          <td class="">-</td>
+          <td class="">-</td>
+          <td class="">-</td>
+          <td class="">-</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
