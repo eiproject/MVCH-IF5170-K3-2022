@@ -36,30 +36,20 @@
           <th>Date</th>
           <th>Action</th>
         </tr>
+        {% for timeslot in TIMESLOT_ITEM %}
         <tr>
-          <td>Doctor A</td>
-          <td>Speciality A</td>
-          <td class="text-center">Day A</td>
-          <td class="text-center">Time A</td>
-          <td class="text-center">Date A</td>
+          <td>{{ timeslot[0] }}</td>
+          <td>{{ timeslot[1] }}</td>
+          <td class="text-center">{{ timeslot[2] }}</td>
+          <td class="text-center">{{ timeslot[3] }}</td>
+          <td class="text-center">{{ timeslot[4] }}</td>
           <td class="text-center">
             <button class="bg-green_light rounded-xl px-4 py-2 hover:bg-green_dark duration-500 my-1">
               Select
             </button>
           </td>
         </tr>
-        <tr>
-          <td>Doctor B</td>
-          <td>Speciality B</td>
-          <td class="text-center">Day B</td>
-          <td class="text-center">Time B</td>
-          <td class="text-center">Date B</td>
-          <td class="text-center">
-            <button class="bg-green_light rounded-xl px-4 py-2 hover:bg-green_dark duration-500 my-1">
-              Select
-            </button>
-          </td>
-        </tr>
+        {% endfor %}
       </table>
     </div>
   </div>
@@ -94,6 +84,9 @@
     }
     else if (input_date.value){
       window.location.href = window.location.origin + window.location.pathname + '?date=' + input_date.value
+    }
+    else {
+      window.location.href = window.location.origin + window.location.pathname
     }
   }
 </script>
