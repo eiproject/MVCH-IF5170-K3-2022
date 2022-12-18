@@ -1,6 +1,6 @@
 from typing import Tuple
 from core.entity import UserType
-from core.key import CreatePatientKey, CreatePhysicianScheduleKey, CreateScheduleKey, generate_dummy_schedule
+from core.key import CreatePatientKey, CreatePhysicianScheduleKey, CreateScheduleKey, generate_dummy_schedule, GetUserIdFromKey
 from core.util import check_jwt, get_session_key
 from . import app, jwt, db, hospital_id
 from flask import Flask, request, render_template, redirect, jsonify, session
@@ -14,7 +14,7 @@ def dashboard():
 
     if user_type == UserType.PATIENT:
         template = 'dashboard/patient-home.html'
-    elif user_type == UserType.DOCTOR:
+    elif user_type == UserType.PHYSICIAN:
         template = 'dashboard/doctor-home.html'
     elif user_type == UserType.NURSE:
         template = 'dashboard/nurse-home.html'
@@ -76,12 +76,26 @@ def doctor_schedule():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
 
+    # search using input from field
+    search_keyword = request.args.get('doctor')
+    search_result = db.keys(f'*PhysicianSchedule*{search_keyword}*')
+    search_result = search_result[0].decode('utf-8') \
+        if search_result else None
+
+    if search_keyword and search_result:
+        physician_email = GetUserIdFromKey(search_result)
+        physician_key = search_result
+    elif user_type == UserType.PHYSICIAN:
+        physician_email = email
+        physician_key = CreatePhysicianScheduleKey(hospital_id, email)
+    else:
+        physician_email = ''
+        physician_key = ''
+
     # generating timeslot
     now = datetime.now()
     thresh = now + timedelta(days=7)
-
-    key = CreatePhysicianScheduleKey(hospital_id, email)
-    schedules_id = [int(v) for v in db.smembers(key)]
+    schedules_id = [int(v) for v in db.smembers(physician_key)]
     schedules_id.sort()
     
     timeslot = {}
@@ -129,11 +143,12 @@ def doctor_schedule():
         EMAIL=email, 
         USER_TYPE=user_type, 
         USER_FULLNAME=email,
-        USER_NAME=email.split('@')[0],
-        USER_SPECIALIZATION='Dentist',
+        PHYSICIAN_NAME=physician_email.split('@')[0],
+        PHYSICIAN_SPECIALIZATION='Dentist',
         TIMESLOT_HEADER=timeslot_render[0],
         TIMESLOT_ITEM=timeslot_render[1:],
         FROM_TO_SCHEDULE_RANGE=f'from {header[1]} to {header[-1]}',
+        SEARCH_KEYWORD=search_keyword
         )
 
 @app.route("/dashboard/consultation-schedule", methods=["GET"])

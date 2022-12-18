@@ -7,15 +7,24 @@
     <div class="my-4 flex flex-col">
       {% if USER_TYPE == 'patient' %}
       <div class="flex items-center my-2 w-5/12">
-        <p class="w-4/12">Search Doctor</p>
+        <p class="w-4/12">Search Physician</p>
+        {% if SEARCH_KEYWORD %}
+        <input id="search_doctor" value="{{SEARCH_KEYWORD}}" type="text" placeholder="Input Doctor Name" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+        {% else %}
         <input id="search_doctor" type="text" placeholder="Input Doctor Name" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+        {% endif %}
+
         <button id="search_doctor_btn" onclick="doSearchDoctor();"></button>
       </div>
       {% endif %}
       <div class="flex justify-between">
         <p class="mb-2">
           {% if USER_TYPE == 'patient' %}
-          Doctor: <b>DOCTOR NAME</b>
+            {% if PHYSICIAN_NAME %}
+            Physician: <b>{{ PHYSICIAN_NAME }}</b>
+            {% else %}
+            Physician: <b> ... </b>
+            {% endif %}
           {% endif %}
         </p>
         <p class="text-sm">Schedule {{ FROM_TO_SCHEDULE_RANGE }}</p>
@@ -31,8 +40,8 @@
           {% for v in row %}
             {% if v == True %}
             <td class="bg-green_light hover:bg-green_dark duration-500 cursor-pointer border border-green_dark">
-              <p class="text-sm font-bold">{{ USER_NAME }}</p>
-              <p class="text-xs">{{ USER_SPECIALIZATION }}</p>
+              <p class="text-sm font-bold">{{ PHYSICIAN_NAME }}</p>
+              <p class="text-xs">{{ PHYSICIAN_SPECIALIZATION }}</p>
             </td>
             {% elif v == False %}
             <td class="border border-green_dark">-</td>
@@ -61,9 +70,9 @@
       document.getElementById("search_doctor_btn").click();
     }
   });
-
+  
   function doSearchDoctor(){
-    window.location.href = window.location.href + '?doctor=' + input.value
+    window.location.href = window.location.origin + window.location.pathname + '?doctor=' + input.value
   }
 </script>
 {% endblock %}
