@@ -1,4 +1,5 @@
 from typing import Tuple
+from core.context import get_physician_spesialization
 from core.entity import UserType
 from core.key import CreatePatientKey, CreatePhysicianScheduleKey, CreateScheduleKey, generate_dummy_schedule, GetUserIdFromKey
 from core.util import check_jwt, get_session_key
@@ -85,12 +86,15 @@ def doctor_schedule():
     if search_keyword and search_result:
         physician_email = GetUserIdFromKey(search_result)
         physician_key = search_result
+        physician_specialization = get_physician_spesialization(db, hospital_id, physician_email)
     elif user_type == UserType.PHYSICIAN:
         physician_email = email
         physician_key = CreatePhysicianScheduleKey(hospital_id, email)
+        physician_specialization = get_physician_spesialization(db, hospital_id, physician_email)
     else:
         physician_email = ''
         physician_key = ''
+        physician_specialization = ''
 
     # generating timeslot
     now = datetime.now()
@@ -144,7 +148,7 @@ def doctor_schedule():
         USER_TYPE=user_type, 
         USER_FULLNAME=email,
         PHYSICIAN_NAME=physician_email.split('@')[0],
-        PHYSICIAN_SPECIALIZATION='Dentist',
+        PHYSICIAN_SPECIALIZATION=physician_specialization,
         TIMESLOT_HEADER=timeslot_render[0],
         TIMESLOT_ITEM=timeslot_render[1:],
         FROM_TO_SCHEDULE_RANGE=f'from {header[1]} to {header[-1]}',

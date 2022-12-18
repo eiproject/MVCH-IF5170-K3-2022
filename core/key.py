@@ -7,6 +7,12 @@ def GetUserIdFromKey(user_key:str) -> str:
 def CreatePatientKey(hospital_id:str, user_id:str) -> str:
     return f'{hospital_id}:Patient[id:{user_id}]'
 
+def CreatePhysicianKey(hospital_id:str, user_id:str) -> str:
+    return f'{hospital_id}:Physician[id:{user_id}]'
+
+def CreateNurseKey(hospital_id:str, user_id:str) -> str:
+    return f'{hospital_id}:Nurse[id:{user_id}]'
+
 def CreateScheduleKey(hospital_id:str, schedule_id:int) -> str:
     # Hospital_id:Schedule[id:schedule_id] = start timestamp end timestamp
     return f'{hospital_id}:Schedule[id:{schedule_id}]'
@@ -44,3 +50,6 @@ def generate_dummy_phy_schedule(db, hospital_id, email):
 
 # generate_dummy_schedule(db, hospital_id)
 # generate_dummy_phy_schedule(db, hospital_id, 'doctor@gmail.com')
+
+
+# hset ID:Physician[id:doctor@gmail.com] NIC 217836271863 specialization Dentist

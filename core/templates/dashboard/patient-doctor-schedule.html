@@ -21,7 +21,7 @@
         <p class="mb-2">
           {% if USER_TYPE == 'patient' %}
             {% if PHYSICIAN_NAME %}
-            Physician: <b>{{ PHYSICIAN_NAME }}</b>
+            Physician: <b>{{ PHYSICIAN_NAME }} ({{ PHYSICIAN_SPECIALIZATION }})</b>
             {% else %}
             Physician: <b> ... </b>
             {% endif %}
