@@ -8,7 +8,8 @@
       {% if USER_TYPE == 'patient' %}
       <div class="flex items-center my-2 w-5/12">
         <p class="w-4/12">Search Doctor</p>
-        <input id="doctor_name" type="text" placeholder="Input Doctor Name" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+        <input id="search_doctor" type="text" placeholder="Input Doctor Name" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+        <button id="search_doctor_btn" onclick="doSearchDoctor();"></button>
       </div>
       {% endif %}
       <div class="flex justify-between">
@@ -17,39 +18,30 @@
           Doctor: <b>DOCTOR NAME</b>
           {% endif %}
         </p>
-        <p>MONTH/YEAR schedule</p>
+        <p class="text-sm">Schedule {{ FROM_TO_SCHEDULE_RANGE }}</p>
       </div>
       <table class="text-sm">
-        <tr class="border-b border-t border-green_dark">
-          <th class="py-2">Time</th>
-          <th>(11/19) Monday</th>
-          <th>(11/20) Tuesday</th>
-          <th>(11/21) Wednesday</th>
-          <th>(11/22) Thursday</th>
-          <th>(11/23) Friday</th>
-          <th>(11/24) Saturday</th>
-          <th>(11/25) Sunday</th>
+        <tr>
+          {% for val in TIMESLOT_HEADER %}
+          <th class="py-2 border border-green_dark">{{ val }}</th>
+          {% endfor %}
         </tr>
+        {% for row in TIMESLOT_ITEM %}
         <tr class="text-center h-10">
-          <td>07.00</td>
-          <td class="bg-green_light hover:bg-green_dark duration-500 cursor-pointer">Available</td>
-          <td class="bg-green_light hover:bg-green_dark duration-500 cursor-pointer">Available</td>
-          <td class="bg-green_light hover:bg-green_dark duration-500 cursor-pointer">Available</td>
-          <td class="bg-green_light hover:bg-green_dark duration-500 cursor-pointer">Available</td>
-          <td class="bg-green_light hover:bg-green_dark duration-500 cursor-pointer">Available</td>
-          <td class="bg-green_light hover:bg-green_dark duration-500 cursor-pointer">Available</td>
-          <td class="bg-green_light hover:bg-green_dark duration-500 cursor-pointer">Available</td>
+          {% for v in row %}
+            {% if v == True %}
+            <td class="bg-green_light hover:bg-green_dark duration-500 cursor-pointer border border-green_dark">
+              <p class="text-sm font-bold">{{ USER_NAME }}</p>
+              <p class="text-xs">{{ USER_SPECIALIZATION }}</p>
+            </td>
+            {% elif v == False %}
+            <td class="border border-green_dark">-</td>
+            {% else %}
+            <td class="border border-green_dark">{{ v }}</td>
+            {% endif %} 
+          {% endfor %}
         </tr>
-        <tr class="text-center h-10">
-          <td>08.00</td>
-          <td class="bg-gray-100">Not Available</td>
-          <td class="bg-gray-100">Not Available</td>
-          <td class="bg-gray-100">Not Available</td>
-          <td class="bg-gray-100">Not Available</td>
-          <td class="bg-gray-100">Not Available</td>
-          <td class="bg-gray-100">Not Available</td>
-          <td class="bg-gray-100">Not Available</td>
-        </tr>
+        {% endfor %}
       </table>
     </div>
   </div>
@@ -57,4 +49,21 @@
 {% endblock %}
 
 {% block script %}
+<script>
+  // Execute a function when the user presses a key on the keyboard
+  var input = document.getElementById("search_doctor");
+  input.addEventListener("keypress", function(event) {
+    // If the user presses the "Enter" key on the keyboard
+    if (event.key === "Enter") {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      document.getElementById("search_doctor_btn").click();
+    }
+  });
+
+  function doSearchDoctor(){
+    window.location.href = window.location.href + '?doctor=' + input.value
+  }
+</script>
 {% endblock %}
