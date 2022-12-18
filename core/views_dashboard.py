@@ -76,17 +76,15 @@ def doctor_schedule():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
 
+    # generating timeslot
     now = datetime.now()
     thresh = now + timedelta(days=7)
 
     key = CreatePhysicianScheduleKey(hospital_id, email)
     schedules_id = [int(v) for v in db.smembers(key)]
     schedules_id.sort()
-    # timeslot = {
-    #     'date': [ hour ]
-    # }
+    
     timeslot = {}
-
     for id in schedules_id:
         sch_key = CreateScheduleKey(hospital_id, id)
         sch_data = db.hgetall(sch_key)
@@ -96,7 +94,6 @@ def doctor_schedule():
         start_date = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
         
         date_key = start_date.strftime("%m/%d %A")
-        # day = start_date.strftime('%A')
         hour = start_date.hour
 
         if start_date.date() >= now.date() and  start_date.date() < thresh.date():
@@ -104,8 +101,6 @@ def doctor_schedule():
                 timeslot[date_key].append(hour)
             else:
                 timeslot[date_key] = [hour]
-
-    print(timeslot)
     
     # rendering 
     header = ['Time']
@@ -127,10 +122,6 @@ def doctor_schedule():
             else:
                 row.append(False)
         timeslot_render.append(row)
-
-    print(timeslot_render)
-
-
 
     return render_template(
         'dashboard/patient-doctor-schedule.html', 
