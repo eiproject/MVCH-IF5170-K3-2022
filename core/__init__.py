@@ -41,4 +41,7 @@ bcrypt = Bcrypt(app)
 region = 'indo'
 hospital_id = 'ID'
 
-from core import views, api_user, views_dashboard, error_handler
+from core import \
+    views, views_dashboard, \
+    api_user, api_patient, \
+    error_handler, jwt_test
