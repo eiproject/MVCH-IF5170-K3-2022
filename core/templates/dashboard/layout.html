@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block head %}
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block header %}{% endblock %}
@@ -17,7 +17,9 @@
         </button>
         {% if USER_TYPE == 'patient'%}
         <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
-          href="/dashboard/patient-registration">Register Teleconsultation</a>
+          href="/dashboard/patient-registration">
+          Register Teleconsultation
+        </a>
         <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
           href="/dashboard/doctor-schedule">Doctor Schedule</a>
         {% elif USER_TYPE == 'doctor'%}
@@ -51,14 +53,8 @@
         </div>
         <div class="flex">
           <div class="flex flex-col justify-end">
-            <p class="text-sm">PERSON FULL NAME</p>
-            {% if USER_TYPE == 'patient'%}
-            <p class="text-xs">Patient</p>
-            {% elif USER_TYPE == 'doctor'%}
-            <p class="text-xs">Doctor</p>
-            {% elif USER_TYPE == 'nurse'%}
-            <p class="text-xs">Nurse</p>
-            {% endif %} 
+            <p class="text-sm">{{ USER_FULLNAME }}</p>
+            <p class="text-xs">{{ USER_TYPE }}</p>
           </div>
           <div class="ml-2">
             <img src="https://cvhrma.org/wp-content/uploads/2015/07/default-profile-photo.jpg" class="w-10 rounded-md"/>

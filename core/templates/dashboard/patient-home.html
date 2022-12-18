@@ -7,11 +7,19 @@
   <div class="flex flex-grow">
     <div class="w-8/12 mr-2 flex flex-col flex-grow">
       <div class="flex justify-center bg-white rounded-xl border border-green_dark p-2 mb-2">
-        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500">
-          Register
+        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500"
+          onclick="window.location.href='/dashboard/patient-registration'">
+          <div class="flex justify-center items-center">
+            <i class="fa-regular fa-file-lines fa-2xl mr-2"></i>
+            <p class="text-left">Register</p>
+          </div>
         </button>
-        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500">
-          Doctor Schedule
+        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500"
+          onclick="window.location.href='/dashboard/doctor-schedule'">
+          <div class="flex justify-center items-center">
+            <i class="fa-regular fa-calendar fa-2xl mr-2"></i>
+            <p class="text-left">Doctor Schedule</p>
+          </div>
         </button>
       </div>
       <div class="flex flex-col bg-white rounded-xl border border-green_dark p-2 flex-grow">
