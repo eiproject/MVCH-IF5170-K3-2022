@@ -39,5 +39,6 @@ db.init_app(app)
 bcrypt = Bcrypt(app)
 
 region = 'indo'
+hospital_id = 'ID'
 
 from core import views, api_user, views_dashboard, error_handler

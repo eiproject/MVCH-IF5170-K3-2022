@@ -1,7 +1,9 @@
 from hashlib import sha256
 from http import HTTPStatus
 from flask import jsonify, request, session
-from . import app, db, BASE_DIR, region
+
+from core.key import UserKey
+from . import app, db, BASE_DIR, region, hospital_id
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
 
@@ -10,19 +12,21 @@ def register():
     code = HTTPStatus.OK
     message = "OK"
     email, password = request.form.get('email'), request.form.get('password')
-
-    is_email_exists = db.hget(email, 'password')
+    user_id_key = UserKey(hospital_id, email)
+    is_email_exists = db.hget(user_id_key, 'password')
 
     if (is_email_exists):
         code = HTTPStatus.BAD_REQUEST
         message = "User already registered."
     else:        
         hashed_pw = sha256(password.encode('utf-8')).hexdigest()
-        db.hset(name=email, mapping={
-            'password': hashed_pw,
-            'user_type': 'patient',
-            'region': region,
-        })
+        db.hset(
+            name=user_id_key, 
+            mapping={
+                'password': hashed_pw,
+                'user_type': 'doctor',
+            }
+        )
             
     json_return = {
         "code": code,
@@ -38,9 +42,10 @@ def login():
     message = "OK"
     jwt_token = None
     email, password = request.form.get('email'), request.form.get('password')
+    user_id_key = UserKey(hospital_id, email)
 
-    is_email_exists = db.hget(email, 'password')
-
+    is_email_exists = db.hget(user_id_key, 'password')
+    print(user_id_key)
     if (not is_email_exists):
         code = HTTPStatus.BAD_REQUEST
         message = "User not registered."
@@ -53,7 +58,7 @@ def login():
             message = "Wrong password."
         else:
             message = "Login OK"
-            jwt_token = create_access_token(identity=email)
+            jwt_token = create_access_token(identity=user_id_key)
             # store in session
             session['jwt'] = jwt_token
 

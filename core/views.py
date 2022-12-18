@@ -1,4 +1,4 @@
-from core.util import get_session_mail
+from core.util import get_session_key
 from . import app, jwt, db
 from flask import Flask, request, render_template, redirect, jsonify, session
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, decode_token
@@ -8,7 +8,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 def landing_page():
     email = None
     if 'jwt' in session:
-        email = get_session_mail()
+        email = get_session_key()
         if db.hgetall(email):
             pass
         else:
@@ -23,7 +23,7 @@ def login_test():
     email = None
 
     if 'jwt' in session:
-        email = get_session_mail()
+        email = get_session_key()
         if db.hgetall(email):
             print('OK')
             return redirect('/dashboard')
@@ -39,7 +39,7 @@ def register_view():
     email = None
 
     if 'jwt' in session:
-        email = get_session_mail()
+        email = get_session_key()
         if db.hgetall(email):
             print('OK')
             return redirect('/dashboard')
