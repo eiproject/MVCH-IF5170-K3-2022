@@ -7,11 +7,22 @@
     <div class="flex justify-between">
       <div class="flex items-center my-2 w-5/12">
         <p class="w-4/12">Search by Doctor</p>
+        {% if KEYWORD_DOCTOR %}
+        <input id="bydoctor" type="text" value="{{ KEYWORD_DOCTOR }}" placeholder="Search by doctor" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+        {% else %}
         <input id="bydoctor" type="text" placeholder="Search by doctor" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+        {% endif %}
       </div>
       <div class="flex items-center my-2 w-5/12">
         <p class="w-4/12">Search by Date</p>
+        {% if KEYWORD_DATE %}
+        <input id="bydate" type="date" value="{{ KEYWORD_DATE }}" placeholder="Search by date" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+        {% else %}
         <input id="bydate" type="date" placeholder="Search by date" class="w-8/12 bg-green_light rounded-xl px-2 py-1 border border-green_dark"/>
+        {% endif %}
+      </div>
+      <div class="flex justify-center items-center">
+        <button id="submit_search" class="bg-green_light hover:bg-green_dark duration-500 rounded-xl px-4 py-2 border border-green_dark" onclick="doSearch()">Submit</button>
       </div>
     </div>
 
@@ -56,4 +67,34 @@
 {% endblock %}
 
 {% block script %}
+<script>
+  // Execute a function when the user presses a key on the keyboard
+  var input_doctor = document.getElementById("bydoctor");
+  var input_date = document.getElementById("bydate");
+
+  function triggerButton(event) {
+    // If the user presses the "Enter" key on the keyboard
+    if (event.key === "Enter") {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      document.getElementById("submit_search").click();
+    }
+  };
+
+  input_doctor.addEventListener("keypress", triggerButton)
+  input_date.addEventListener("keypress", triggerButton)
+  
+  function doSearch(){
+    if (input_doctor.value && input_date.value){
+      window.location.href = window.location.origin + window.location.pathname + '?doctor=' + input_doctor.value + '&date=' + input_date.value
+    }
+    else if (input_doctor.value){
+      window.location.href = window.location.origin + window.location.pathname + '?doctor=' + input_doctor.value
+    }
+    else if (input_date.value){
+      window.location.href = window.location.origin + window.location.pathname + '?date=' + input_date.value
+    }
+  }
+</script>
 {% endblock %}

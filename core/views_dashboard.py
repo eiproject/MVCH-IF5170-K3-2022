@@ -50,12 +50,18 @@ def patient_registration():
 def register_consultation():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
+
+    search_keyword_doctor = request.args.get('doctor')
+    search_keyword_date = request.args.get('date')
+    print(search_keyword_doctor, search_keyword_date)
     return render_template(
         'dashboard/patient-register-consultation.html', 
         Name="Register Consultation", 
         EMAIL=email, 
         USER_TYPE=user_type, 
         USER_FULLNAME=email,
+        KEYWORD_DOCTOR=search_keyword_doctor,
+        KEYWORD_DATE=search_keyword_date,
         )
 
     
