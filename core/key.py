@@ -44,16 +44,19 @@ def generate_dummy_schedule(db, region_id):
     for day in range(19, 24):
         for hour in range(7, 17):
             key = CreateScheduleKey(region_id, id)
-            start = f'2022-12-{day}T{hour}:00:00'
-            end = f'2022-12-{day}T{hour}:59:59'
-            if not db.hgetall(key):
-                db.hset(
-                    name=key, 
-                    mapping={
-                        'start': start,
-                        'end': end,
-                    }
-                )
+            # format: MM/DD/YYYY HH:MM
+            start = f'12/{day}/2022 {hour}:00:00'
+            end = f'12/{day}/2022 {hour}:59:59'
+
+            print('start')
+            # if not db.hgetall(key):
+            db.hset(
+                name=key, 
+                mapping={
+                    'start': start,
+                    'end': end,
+                }
+            )
             id+=1
 
 def generate_dummy_phy_schedule(db, region_id, email):
@@ -68,23 +71,7 @@ def generate_dummy_phy_schedule(db, region_id, email):
 def generate_dummy_employee(db, region_id, email):
     data = {
         'name': 'dr. Ganesha Mulya',
-        'dob': '1980-4-8',
-        'address': '913-2855 Justo. Rd.',
-        'phone': '(026) 7881 4576',
-        'gender': 'L',
-        'hospital_id': 'mvch001',
-    }
-
-    db.hset(
-        name=CreateEmployeeKey(region_id, email),
-        mapping=data
-    )
-
-
-def generate_dummy_patient_info(db, region_id, email):
-    data = {
-        'name': 'dr. Ganesha Mulya',
-        'dob': '1980-4-8',
+        'dob': '04/08/1980',
         'address': '913-2855 Justo. Rd.',
         'phone': '(026) 7881 4576',
         'gender': 'L',

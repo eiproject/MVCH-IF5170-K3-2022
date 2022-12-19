@@ -91,7 +91,7 @@ def patient_information():
 
     patient_id = request.form.get('user_id')
     patient_info = get_patient_information(db, region_id, patient_id)
-    print(patient_info)
+
     json_return = {
         "code": code,
         "data": patient_info,

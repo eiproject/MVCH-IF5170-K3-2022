@@ -14,7 +14,6 @@ def landing_page():
         else:
             redirect('/logout')
 
-    print("Home works!")
     return render_template('home.html', Name="Home", EMAIL=email)
 
 
@@ -25,12 +24,9 @@ def login_test():
     if 'jwt' in session:
         email = get_session_key()
         if db.hgetall(email):
-            print('OK')
             return redirect('/dashboard')
         else:
             return redirect('/logout')
-
-    print("Login works!")
     return render_template('login.html', Name="Login", EMAIL=email)
 
     
@@ -41,12 +37,9 @@ def register_view():
     if 'jwt' in session:
         email = get_session_key()
         if db.hgetall(email):
-            print('OK')
             return redirect('/dashboard')
         else:
             return redirect('/logout')
-
-    print("Register works!")
     return render_template('register.html', Name="Register", EMAIL=email)
 
 
@@ -54,7 +47,5 @@ def register_view():
 def logout():
     if ('jwt' in session):
         del session['jwt'] 
-
-    print("Logout works!")
     return redirect('/login')
 

@@ -1,19 +1,19 @@
-from typing import Tuple
+from . import app, db, region_id
 from core.context import get_all_schedule_by_date, get_employee_name, get_upcoming_appointment_schedule, get_user_fullname, get_physician_spesialization
 from core.entity import UserType
-from core.key import CreateAppointmentKey, CreateNurseAppointmentKey, CreatePatientKey, CreatePhysicianAppointmentKey, CreatePhysicianScheduleKey, CreateScheduleKey, generate_dummy_schedule, GetUserIdFromKey, CreatePatientAppointmentKey, generate_dummy_employee
-from core.util import check_jwt, get_session_key
-from . import app, jwt, db, region_id
-from flask import Flask, request, render_template, redirect, jsonify, session
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, decode_token
+from core.key import * 
+from core.setting import *
+from core.util import check_jwt
 from datetime import datetime, timedelta
+from flask import request, render_template, redirect, session
+
 
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
-
+    
     if user_type == UserType.PATIENT:
         template = 'dashboard/patient-home.html'
     elif user_type == UserType.PHYSICIAN:
@@ -26,6 +26,8 @@ def dashboard():
 
     # CONSULTATION_SCHEDULE
     phy_sch_today = get_all_schedule_by_date(db, region_id, datetime.now())
+
+    
 
     return render_template(template, 
         Name="Dashboard", 
@@ -95,7 +97,7 @@ def register_consultation():
             start = sch_data[b'start'].decode("utf-8")
             end = sch_data[b'end'].decode("utf-8")
 
-            start_date = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
+            start_date = datetime.strptime(start, DATE_FORMAT)
             
             is_add = False
             if selected_date is not None:
@@ -160,7 +162,7 @@ def history_consultation():
         sch_key = CreateScheduleKey(region_id, sch_id)
         sch_data = db.hgetall(sch_key)
         end = sch_data[b'end'].decode('utf-8')
-        end_datetime = datetime.strptime(end, "%Y-%m-%dT%H:%M:%S")
+        end_datetime = datetime.strptime(end, DATE_FORMAT)
 
         if end_datetime < datetime.now():
             physician_id = app_data[b'physician_id'].decode('utf-8')
@@ -168,7 +170,7 @@ def history_consultation():
             physician_name = get_employee_name(db, region_id, physician_id)
 
             start = sch_data[b'start'].decode('utf-8')
-            start_date = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
+            start_date = datetime.strptime(start, DATE_FORMAT)
 
             day = start_date.strftime('%A')
             time = start_date.strftime('%H:%M')
@@ -228,7 +230,7 @@ def doctor_schedule():
         start = sch_data[b'start'].decode("utf-8")
         end = sch_data[b'end'].decode("utf-8")
 
-        start_date = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
+        start_date = datetime.strptime(start, DATE_FORMAT)
         
         date_key = start_date.strftime("%m/%d %A")
         hour = start_date.hour

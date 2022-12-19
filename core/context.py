@@ -3,6 +3,7 @@ import redis
 from core.entity import UserType
 
 from core.key import *
+from core.setting import *
 
 
 def get_physician_spesialization(db:redis.Redis, region_id, physician_id):
@@ -90,9 +91,10 @@ def get_all_schedule_by_date(db:redis.Redis, region_id, datetime_obj:datetime):
 
         for sch_id in sch_list:
             sch_key = CreateScheduleKey(region_id, sch_id)
+
             sch_data = db.hgetall(sch_key)
             start = sch_data[b'start'].decode('utf-8')
-            start_date = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
+            start_date = datetime.strptime(start, DATE_FORMAT)
             if start_date.date() == datetime_obj.date():
                 day = start_date.strftime('%A')
                 time = start_date.strftime('%H:%M')
@@ -140,8 +142,8 @@ def get_upcoming_appointment_schedule(db:redis.Redis, region_id, user_id, user_t
         sch_data = db.hgetall(sch_key)
         start = sch_data[b'start'].decode('utf-8')
 
-        start_date = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
-        print(start_date)
+        start_date = datetime.strptime(start, DATE_FORMAT)
+
         if start_date > now:
             day = start_date.strftime('%A')
             time = start_date.strftime('%H:%M')
