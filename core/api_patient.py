@@ -1,7 +1,7 @@
 from . import app, db, region_id
 
 from core.entity import UserType
-from core.key import CreatePatientKey, GetUserIdFromKey
+from core.key import *
 from core.views_dashboard import check_jwt
 from core.context import get_patient_information, store_appointment
 
@@ -63,15 +63,26 @@ def create_appointment():
     sch_phy = request.form.get('sch_phy')
     schedule_id, physician_mail = sch_phy.split(':')
 
-    store_appointment(
-        db=db, 
-        region_id=region_id, 
-        schedule_id=schedule_id, 
-        patient_id=email, 
-        physician_id=physician_mail,
-        nurse_id='-',
-        notes='-',
-        )
+    appointment_key = CreatePatientAppointmentKey(region_id, email)
+    appointment_ids = db.smembers(appointment_key)
+
+    registered_schedule_ids = []
+    for app_id in appointment_ids:
+        app_id = int(app_id)
+        app_key = CreateAppointmentKey(region_id, app_id)
+        schedule_id = db.hget(app_key, 'schedule_id')
+        registered_schedule_ids.append(int(schedule_id))
+
+    if schedule_id not in registered_schedule_ids:
+        store_appointment(
+            db=db, 
+            region_id=region_id, 
+            schedule_id=schedule_id, 
+            patient_id=email, 
+            physician_id=physician_mail,
+            nurse_id='-',
+            notes='-',
+            )
 
     json_return = {
         "code": code,
