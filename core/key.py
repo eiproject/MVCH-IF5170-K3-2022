@@ -14,12 +14,25 @@ def CreateNurseKey(hospital_id:str, user_id:str) -> str:
     return f'{hospital_id}:Nurse[id:{user_id}]'
 
 def CreateScheduleKey(hospital_id:str, schedule_id:int) -> str:
-    # Hospital_id:Schedule[id:schedule_id] = start timestamp end timestamp
     return f'{hospital_id}:Schedule[id:{schedule_id}]'
 
 def CreatePhysicianScheduleKey(hospital_id:str, user_id:str) -> str:
-    # Hospital_id:PhysicianSchedule[id:user_id] = [ schedule_id ]
     return f'{hospital_id}:PhysicianSchedule[id:{user_id}]'
+
+def CreateAppointmentKey(hospital_id:str, appointment_id:int) -> str:
+    return f'{hospital_id}:Appointment[id:{appointment_id}]'
+
+def CreateLatestAppointmentIdKey(hospital_id:str) -> str:
+    return f'{hospital_id}:Appointment:latest_id'
+
+def CreatePatientAppointmentKey(hospital_id:str, user_id:str) -> str:
+    return f'{CreatePatientKey(hospital_id, user_id)}:Appointment'
+
+def CreatePhysicianAppointmentKey(hospital_id:str, user_id:str) -> str:
+    return f'{CreatePhysicianKey(hospital_id, user_id)}:Appointment'
+
+def CreateNurseAppointmentKey(hospital_id:str, user_id:str) -> str:
+    return f'{CreateNurseKey(hospital_id, user_id)}:Appointment'
 
 # dummy data generator 
 def generate_dummy_schedule(db, hospital_id):

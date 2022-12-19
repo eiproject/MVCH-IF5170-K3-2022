@@ -1,6 +1,23 @@
 {% extends "dashboard/layout.html" %}
 
 {% block content %}
+<div id="modal" class="fixed left-0 top-0 w-full h-full bg-green_dark bg-opacity-90 hidden">
+  <div class="mt-40 flex justify-center items-center">
+    <div class="bg-white rounded-xl p-10">
+      <div class="flex flex-col justify-center items-center">
+        <p>Physician: <span id="selected-doctor"></span> (<span id="selected-speciality"></span>)</p>
+        <p>Time: <span id="selected-date"></span></p>
+      </div>
+      <p class="text-xs mt-4">Are you sure want to make this appointment?</p>
+      <div class="flex justify-center items-center mt-4">
+        <button class="text-xs font-bold duration-500 bg-green_light hover:bg-green_dark px-4 py-2 rounded-xl mx-2"
+          onclick="submit()">Yes</button>
+        <button class="text-xs font-bold duration-500 bg-red-100 hover:bg-red-300 px-4 py-2 rounded-xl mx-2"
+          onclick="cancel()">No</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="p-10 flex flex-col flex-grow">
   <p class="font-bold text-2xl">Register Consultation</p>
   <div class="bg-white rounded-xl border border-green_dark py-10 px-20 mt-4 flex-grow">
@@ -32,8 +49,8 @@
           <th class="py-2">Doctor</th>
           <th>Speciality</th>
           <th>Day</th>
-          <th>Time</th>
           <th>Date</th>
+          <th>Time</th>
           <th>Action</th>
         </tr>
         {% for timeslot in TIMESLOT_ITEM %}
@@ -44,7 +61,8 @@
           <td class="text-center">{{ timeslot[3] }}</td>
           <td class="text-center">{{ timeslot[4] }}</td>
           <td class="text-center">
-            <button class="bg-green_light rounded-xl px-4 py-2 hover:bg-green_dark duration-500 my-1">
+            <button id="{{ timeslot }}" class="bg-green_light rounded-xl px-4 py-2 hover:bg-green_dark duration-500 my-1"
+              onclick="doSelect(this.id);">
               Select
             </button>
           </td>
@@ -88,6 +106,50 @@
     else {
       window.location.href = window.location.origin + window.location.pathname
     }
+  }
+
+  var selected_id = null
+  const selected_doctor = document.getElementById('selected-doctor')
+  const selected_speciality = document.getElementById('selected-speciality')
+  const selected_date = document.getElementById('selected-date')
+  const modal = document.getElementById('modal')
+
+  function doSelect(button_id){
+    modal.classList.remove('hidden')
+    let selected_row = button_id.slice(1, button_id.length-1).replaceAll("'", '').split(', ')
+    selected_doctor.innerHTML = selected_row[0]
+    selected_speciality.innerHTML = selected_row[1]
+    selected_date.innerHTML = selected_row[2] + ', ' + selected_row[4] + ' on ' + selected_row[3]
+    selected_id = selected_row[5]
+  }
+
+  function cancel(){
+    modal.classList.add('hidden')
+  }
+
+  function submit(){
+    var bodyFormData = new FormData();
+    bodyFormData.append('sch_phy', selected_id);
+
+    axios({
+        method: "post",
+        url: window.location.origin + '/api/create-appointment',
+        data: bodyFormData,
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+      })
+      .then(function (response) {
+        window.location.href = "/dashboard";
+      })
+      .catch(function (error) {
+        if (error.response) {
+          if (error.response.status === 400) {
+            error_logger.classList.remove('hidden');
+            error_logger.innerHTML = error.response.data['message'];
+          }
+        }
+      });
   }
 </script>
 {% endblock %}

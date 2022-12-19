@@ -45,7 +45,7 @@ def login():
     user_id_key = CreateUserKey(hospital_id, email)
 
     is_email_exists = db.hget(user_id_key, 'password')
-    print(user_id_key)
+
     if (not is_email_exists):
         code = HTTPStatus.BAD_REQUEST
         message = "User not registered."

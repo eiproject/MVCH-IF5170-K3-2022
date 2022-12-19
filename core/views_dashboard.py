@@ -1,7 +1,7 @@
 from typing import Tuple
-from core.context import get_physician_spesialization
+from core.context import get_all_schedule_by_date, get_physician_spesialization
 from core.entity import UserType
-from core.key import CreatePatientKey, CreatePhysicianScheduleKey, CreateScheduleKey, generate_dummy_schedule, GetUserIdFromKey
+from core.key import CreateAppointmentKey, CreateNurseAppointmentKey, CreatePatientKey, CreatePhysicianAppointmentKey, CreatePhysicianScheduleKey, CreateScheduleKey, generate_dummy_schedule, GetUserIdFromKey, CreatePatientAppointmentKey
 from core.util import check_jwt, get_session_key
 from . import app, jwt, db, hospital_id
 from flask import Flask, request, render_template, redirect, jsonify, session
@@ -13,18 +13,56 @@ def dashboard():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
 
+    now = datetime.now()
+    appointment_key = None
     if user_type == UserType.PATIENT:
         template = 'dashboard/patient-home.html'
+        appointment_key = CreatePatientAppointmentKey(hospital_id, email)
     elif user_type == UserType.PHYSICIAN:
         template = 'dashboard/doctor-home.html'
+        appointment_key = CreatePhysicianAppointmentKey(hospital_id, email)
     elif user_type == UserType.NURSE:
         template = 'dashboard/nurse-home.html'
+        appointment_key = CreateNurseAppointmentKey(hospital_id, email)
     
+    appointment_ids = db.smembers(appointment_key)
+    appointment_ids = [int(v) for v in appointment_ids] if appointment_ids else []
+
+    # REGISTERED_CONSULTATION_SCHEDULE
+    registered_schedule_render = []
+    for id in appointment_ids:
+        app_key = CreateAppointmentKey(hospital_id, id)
+        app_data = db.hgetall(app_key)
+        physician_id = app_data[b'physician_id'].decode('utf-8')
+        physician_specialization = get_physician_spesialization(db, hospital_id, physician_id)
+
+        schedule_id = app_data[b'schedule_id'].decode('utf-8')
+
+        sch_key = CreateScheduleKey(hospital_id, schedule_id)
+        sch_data = db.hgetall(sch_key)
+        start = sch_data[b'start'].decode('utf-8')
+
+        start_date = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
+        print(start_date)
+        if start_date > now:
+            day = start_date.strftime('%A')
+            time = start_date.strftime('%H:%M')
+            date = start_date.strftime('%Y-%m-%d')
+
+            registered_schedule_render.append([
+                physician_id, physician_specialization, day, date, time
+            ])
+
+    # CONSULTATION_SCHEDULE
+    phy_sch_today = get_all_schedule_by_date(db, hospital_id, datetime.now())
+
     return render_template(template, 
         Name="Dashboard", 
         EMAIL=email, 
         USER_TYPE=user_type,
         USER_FULLNAME=email,
+        REGISTERED_CONSULTATION_SCHEDULE=registered_schedule_render,
+        CONSULTATION_SCHEDULE=phy_sch_today,
         )
 
 
@@ -54,12 +92,18 @@ def register_consultation():
     timeslots = []
     timeslots_render = []
 
+    physician_email = None
+    physician_specialization = None
+    physician_name = None
+
     search_keyword_doctor = request.args.get('doctor')
     search_keyword_date = request.args.get('date')
     
     physicians = db.keys(f'*PhysicianSchedule*{search_keyword_doctor}*')
     physician_sch_key = physicians[0].decode('utf-8') if physicians else None
     
+    selected_date = datetime.strptime(search_keyword_date, "%Y-%m-%d") if search_keyword_date else None
+
     if physician_sch_key:
         physician_email = GetUserIdFromKey(physician_sch_key) 
         physician_specialization = get_physician_spesialization(db, hospital_id, physician_email)
@@ -70,7 +114,6 @@ def register_consultation():
 
         now = datetime.now()
         thresh = now + timedelta(days=7)
-        selected_date = datetime.strptime(search_keyword_date, "%Y-%m-%d") if search_keyword_date else None
 
         # create timeslots
         for id in schedule_ids:
@@ -93,16 +136,17 @@ def register_consultation():
                 day = start_date.strftime('%A')
                 time = start_date.strftime('%H:%M')
                 date = start_date.strftime('%Y-%m-%d')
-                timeslots.append([day, time, date])
+                timeslots.append([day, time, date, f'{id}:{physician_email}'])
 
         # rendering 
         for timeslot in timeslots:
-            day, time, date = timeslot
-            timeslots_render.append([physician_name, physician_specialization, day, time, date])
+            day, time, date, sch_phy = timeslot
+            timeslots_render.append([physician_name, physician_specialization, day, date, time, sch_phy])
+
+    elif selected_date:
+        timeslots_render = get_all_schedule_by_date(db, hospital_id, selected_date)
     else:
-        physician_email = None
-        physician_specialization = None
-        physician_name = None
+        timeslots_render = get_all_schedule_by_date(db, hospital_id, datetime.now())
 
     return render_template(
         'dashboard/patient-register-consultation.html', 

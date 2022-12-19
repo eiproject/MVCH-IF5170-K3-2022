@@ -33,19 +33,25 @@
               <th>Date</th>
               <th>Time</th>
             </tr>
+            {% for row in CONSULTATION_SCHEDULE %}
             <tr class="text-center">
-              <td>1</td>
-              <td>Doctor A</td>
-              <td>Day A</td>
-              <td>Date A</td>
-              <td>Time A</td>
+              <td>{{ loop.index }}</td>
+              <td>
+                <p>{{ row[0] }}</p>
+                <p class="text-xs font-bold">{{ row[1] }}</p>
+              </td>
+              <td>{{ row[2] }}</td>
+              <td>{{ row[3] }}</td>
+              <td>{{ row[4] }}</td>
             </tr>
+            {% endfor %}
           </table>
         </div>
       </div>
     </div>
     <div class="w-4/12 bg-white rounded-xl border border-green_dark p-2 flex flex-col flex-grow">
       <div class="flex flex-col">
+        <p class="font-bold mb-2">Registered Schedule</p>
         <table>
           <tr class="border-b border-t border-green_dark">
             <th class="py-2">Day</th>
@@ -53,9 +59,19 @@
             <th>Doctor</th>
           </tr>
           <tr class="text-center">
-            <td>Day A</td>
-            <td>Time A</td>
-            <td>Doctor A</td>
+            {% for row in REGISTERED_CONSULTATION_SCHEDULE %}
+            <tr class="text-center text-sm">
+              <td>
+                <p>{{ row[3] }}</p>
+                <p class="text-xs">{{ row[2] }}</p>
+              </td>
+              <td>{{ row[4] }}</td>
+              <td>
+                <p>{{ row[0] }}</p>
+                <p class="text-xs font-bold">{{ row[1] }}</p>
+              </td>
+            </tr>
+            {% endfor %}
           </tr>
         </table>
       </div>
