@@ -1,7 +1,7 @@
 from typing import Tuple
-from core.context import get_all_schedule_by_date, get_physician_spesialization
+from core.context import get_all_schedule_by_date, get_employee_name, get_user_fullname, get_physician_spesialization
 from core.entity import UserType
-from core.key import CreateAppointmentKey, CreateNurseAppointmentKey, CreatePatientKey, CreatePhysicianAppointmentKey, CreatePhysicianScheduleKey, CreateScheduleKey, generate_dummy_schedule, GetUserIdFromKey, CreatePatientAppointmentKey
+from core.key import CreateAppointmentKey, CreateNurseAppointmentKey, CreatePatientKey, CreatePhysicianAppointmentKey, CreatePhysicianScheduleKey, CreateScheduleKey, generate_dummy_schedule, GetUserIdFromKey, CreatePatientAppointmentKey, generate_dummy_employee
 from core.util import check_jwt, get_session_key
 from . import app, jwt, db, region_id
 from flask import Flask, request, render_template, redirect, jsonify, session
@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 def dashboard():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
+    user_fullname = get_user_fullname(db, region_id, email, user_type)
 
     now = datetime.now()
     appointment_key = None
@@ -35,6 +36,7 @@ def dashboard():
         app_data = db.hgetall(app_key)
         physician_id = app_data[b'physician_id'].decode('utf-8')
         physician_specialization = get_physician_spesialization(db, region_id, physician_id)
+        physician_name = get_employee_name(db, region_id, physician_id)
 
         schedule_id = app_data[b'schedule_id'].decode('utf-8')
 
@@ -50,7 +52,7 @@ def dashboard():
             date = start_date.strftime('%Y-%m-%d')
 
             registered_schedule_render.append([
-                physician_id, physician_specialization, day, date, time
+                physician_name, physician_specialization, day, date, time
             ])
 
     # CONSULTATION_SCHEDULE
@@ -60,7 +62,7 @@ def dashboard():
         Name="Dashboard", 
         EMAIL=email, 
         USER_TYPE=user_type,
-        USER_FULLNAME=email,
+        USER_FULLNAME=user_fullname,
         REGISTERED_CONSULTATION_SCHEDULE=registered_schedule_render,
         CONSULTATION_SCHEDULE=phy_sch_today,
         )
@@ -70,6 +72,7 @@ def dashboard():
 def patient_registration():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
+    user_fullname = get_user_fullname(db, region_id, email, user_type)
 
     patient_key = CreatePatientKey(region_id, email)
     if db.hgetall(patient_key):
@@ -80,7 +83,7 @@ def patient_registration():
         Name="Patient Registration", 
         EMAIL=email, 
         USER_TYPE=user_type, 
-        USER_FULLNAME=email,
+        USER_FULLNAME=user_fullname,
         )
 
 
@@ -88,11 +91,12 @@ def patient_registration():
 def register_consultation():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
-    
+    user_fullname = get_user_fullname(db, region_id, email, user_type)
+
     timeslots = []
     timeslots_render = []
 
-    physician_email = None
+    physician_id = None
     physician_specialization = None
     physician_name = None
 
@@ -105,9 +109,9 @@ def register_consultation():
     selected_date = datetime.strptime(search_keyword_date, "%Y-%m-%d") if search_keyword_date else None
 
     if physician_sch_key:
-        physician_email = GetUserIdFromKey(physician_sch_key) 
-        physician_specialization = get_physician_spesialization(db, region_id, physician_email)
-        physician_name = physician_email.split('@')[0]
+        physician_id = GetUserIdFromKey(physician_sch_key) 
+        physician_specialization = get_physician_spesialization(db, region_id, physician_id)
+        physician_name = get_employee_name(db, region_id, physician_id)
 
         schedule_ids = [int(v) for v in db.smembers(physician_sch_key)] if physician_sch_key else []
         schedule_ids.sort()
@@ -136,7 +140,7 @@ def register_consultation():
                 day = start_date.strftime('%A')
                 time = start_date.strftime('%H:%M')
                 date = start_date.strftime('%Y-%m-%d')
-                timeslots.append([day, time, date, f'{id}:{physician_email}'])
+                timeslots.append([day, time, date, f'{id}:{physician_id}'])
 
         # rendering 
         for timeslot in timeslots:
@@ -153,7 +157,7 @@ def register_consultation():
         Name="Register Consultation", 
         EMAIL=email,
         USER_TYPE=user_type, 
-        USER_FULLNAME=email,
+        USER_FULLNAME=user_fullname,
         KEYWORD_DOCTOR=search_keyword_doctor,
         KEYWORD_DATE=search_keyword_date,
         TIMESLOT_ITEM=timeslots_render,
@@ -164,7 +168,8 @@ def register_consultation():
 def history_consultation():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
-
+    user_fullname = get_user_fullname(db, region_id, email, user_type)
+    
     if user_type == UserType.PATIENT:
         appointment_key = CreatePatientAppointmentKey(region_id, email)
     elif user_type == UserType.PHYSICIAN:
@@ -187,11 +192,11 @@ def history_consultation():
         sch_data = db.hgetall(sch_key)
         end = sch_data[b'end'].decode('utf-8')
         end_datetime = datetime.strptime(end, "%Y-%m-%dT%H:%M:%S")
-        
+
         if end_datetime < datetime.now():
             physician_id = app_data[b'physician_id'].decode('utf-8')
             physician_specialization = get_physician_spesialization(db, region_id, physician_id)
-            physician_name = physician_id
+            physician_name = get_employee_name(db, region_id, physician_id)
 
             start = sch_data[b'start'].decode('utf-8')
             start_date = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
@@ -208,7 +213,7 @@ def history_consultation():
         Name="History Consultation", 
         EMAIL=email, 
         USER_TYPE=user_type, 
-        USER_FULLNAME=email,
+        USER_FULLNAME=user_fullname,
         COSULTATION_HISTORY=consultation_history,
         )
 
@@ -217,7 +222,8 @@ def history_consultation():
 def doctor_schedule():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
-
+    user_fullname = get_user_fullname(db, region_id, email, user_type)
+    
     # search using input from field
     search_keyword = request.args.get('doctor')
     search_result = db.keys(f'*PhysicianSchedule*{search_keyword}*')
@@ -228,14 +234,17 @@ def doctor_schedule():
         physician_email = GetUserIdFromKey(search_result)
         physician_key = search_result
         physician_specialization = get_physician_spesialization(db, region_id, physician_email)
+        physician_name = get_employee_name(db, region_id, physician_email)
     elif user_type == UserType.PHYSICIAN:
         physician_email = email
         physician_key = CreatePhysicianScheduleKey(region_id, email)
         physician_specialization = get_physician_spesialization(db, region_id, physician_email)
+        physician_name = get_employee_name(db, region_id, physician_email)
     else:
         physician_email = ''
         physician_key = ''
         physician_specialization = ''
+        physician_name = ''
 
     # generating timeslot
     now = datetime.now()
@@ -287,8 +296,8 @@ def doctor_schedule():
         Name="Doctor Schedule", 
         EMAIL=email, 
         USER_TYPE=user_type, 
-        USER_FULLNAME=email,
-        PHYSICIAN_NAME=physician_email.split('@')[0],
+        USER_FULLNAME=user_fullname,
+        PHYSICIAN_NAME=physician_name,
         PHYSICIAN_SPECIALIZATION=physician_specialization,
         TIMESLOT_HEADER=timeslot_render[0],
         TIMESLOT_ITEM=timeslot_render[1:],
@@ -300,12 +309,14 @@ def doctor_schedule():
 def consultation_schedule():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
+    user_fullname = get_user_fullname(db, region_id, email, user_type)
+    
     return render_template(
         'dashboard/doctor-consultation-schedule.html', 
         Name="Consultation Schedule", 
         EMAIL=email, 
         USER_TYPE=user_type, 
-        USER_FULLNAME=email,
+        USER_FULLNAME=user_fullname,
         )
 
     
@@ -313,22 +324,26 @@ def consultation_schedule():
 def patient_list():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
+    user_fullname = get_user_fullname(db, region_id, email, user_type)
+    
     return render_template(
         'dashboard/doctor-patient-list.html', 
         Name="Patient List", 
         EMAIL=email, 
         USER_TYPE=user_type, 
-        USER_FULLNAME=email,
+        USER_FULLNAME=user_fullname,
         )
 
 @app.route("/dashboard/nurse-schedule", methods=["GET"])
 def nurse_schedule():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
+    user_fullname = get_user_fullname(db, region_id, email, user_type)
+    
     return render_template(
         'dashboard/nurse-schedule.html', 
         Name="Nurse Schedule", 
         EMAIL=email, 
         USER_TYPE=user_type, 
-        USER_FULLNAME=email,
+        USER_FULLNAME=user_fullname,
         )

@@ -1,5 +1,6 @@
 from datetime import datetime
 import redis
+from core.entity import UserType
 
 from core.key import *
 
@@ -10,6 +11,21 @@ def get_physician_spesialization(db:redis.Redis, region_id, physician_id):
     specialization = specialization.decode('utf-8')
     return specialization
 
+def get_employee_name(db:redis.Redis, region_id, user_id):
+    key = CreateEmployeeKey(region_id, user_id)
+    name = db.hget(key, 'name')
+    name = name.decode('utf-8')
+    return name
+
+def get_user_fullname(db:redis.Redis, region_id, user_id, user_type):
+    if user_type == UserType.PATIENT:
+        key = CreatePatientKey(region_id, user_id)
+    else:
+        key = CreateEmployeeKey(region_id, user_id)
+        
+    name = db.hget(key, 'name')
+    name = name.decode('utf-8')
+    return name
 
 def store_appointment(db:redis.Redis, region_id, schedule_id, patient_id, physician_id, nurse_id, notes):
     latest_app_key = CreateLatestAppointmentIdKey(region_id)
@@ -62,7 +78,7 @@ def get_all_schedule_by_date(db:redis.Redis, region_id, datetime_obj:datetime):
 
     phy_ids = get_all_physician_id(db, region_id)
     for phy_id in phy_ids:
-        phy_name = phy_id
+        phy_name = get_employee_name(db, region_id, phy_id)
         phy_scpecialization = get_physician_spesialization(db, region_id, phy_id)
 
         # loop to phy schedule and get today schedule

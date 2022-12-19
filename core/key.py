@@ -34,6 +34,10 @@ def CreatePhysicianAppointmentKey(region_id:str, user_id:str) -> str:
 def CreateNurseAppointmentKey(region_id:str, user_id:str) -> str:
     return f'{CreateNurseKey(region_id, user_id)}:Appointment'
 
+def CreateEmployeeKey(region_id:str, user_id:str) -> str:
+    # .. region_id:Employee[id:user_id] = name name dob dob address address phone phone gender gender hospital_id hospital_id 
+    return f'{region_id}:Employee[id:{user_id}]'
+
 # dummy data generator 
 def generate_dummy_schedule(db, region_id):
     id = 0
@@ -61,8 +65,41 @@ def generate_dummy_phy_schedule(db, region_id, email):
         db.sadd(key, s)
 
 
+def generate_dummy_employee(db, region_id, email):
+    data = {
+        'name': 'dr. Ganesha Mulya',
+        'dob': '1980-4-8',
+        'address': '913-2855 Justo. Rd.',
+        'phone': '(026) 7881 4576',
+        'gender': 'L',
+        'hospital_id': 'mvch001',
+    }
+
+    db.hset(
+        name=CreateEmployeeKey(region_id, email),
+        mapping=data
+    )
+
+
+def generate_dummy_patient_info(db, region_id, email):
+    data = {
+        'name': 'dr. Ganesha Mulya',
+        'dob': '1980-4-8',
+        'address': '913-2855 Justo. Rd.',
+        'phone': '(026) 7881 4576',
+        'gender': 'L',
+        'hospital_id': 'mvch001',
+    }
+
+    db.hset(
+        name=CreateEmployeeKey(region_id, email),
+        mapping=data
+    )
+
+
 # generate_dummy_schedule(db, region_id)
 # generate_dummy_phy_schedule(db, region_id, 'doctor@gmail.com')
+# generate_dummy_employee(db, region_id, 'doctor@gmail.com')
 
 
 # hset ID:Physician[id:doctor@gmail.com] NIC 217836271863 specialization Dentist
