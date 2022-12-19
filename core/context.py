@@ -99,9 +99,11 @@ def get_all_schedule_by_date(db:redis.Redis, region_id, datetime_obj:datetime):
                 day = start_date.strftime('%A')
                 time = start_date.strftime('%H:%M')
                 date = start_date.strftime('%Y-%m-%d')
+                
+                is_available = start_date > datetime_obj
 
                 today_phy_sched.append([
-                    phy_name, phy_scpecialization, day, date, time, f'{sch_id}:{phy_id}'
+                    phy_name, phy_scpecialization, day, date, time, f'{sch_id}:{phy_id}', is_available
                 ])
 
             elif start_date.date() > datetime_obj.date():
@@ -148,11 +150,11 @@ def get_upcoming_appointment_schedule(db:redis.Redis, region_id, user_id, user_t
             day = start_date.strftime('%A')
             time = start_date.strftime('%H:%M')
             date = start_date.strftime('%Y-%m-%d')
-
             upcoming_appointments.append([
                 physician_name, physician_specialization, day, date, time, patient_name, patient_id
             ])
 
+    upcoming_appointments.sort(key=lambda x: (x[3], x[4]))
     return upcoming_appointments
 
 def calculate_age(born: datetime):

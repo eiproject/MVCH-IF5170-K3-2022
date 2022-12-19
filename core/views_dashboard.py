@@ -20,14 +20,12 @@ def dashboard():
         template = 'dashboard/doctor-home.html'
     elif user_type == UserType.NURSE:
         template = 'dashboard/nurse-home.html'
-    
-    # REGISTERED_CONSULTATION_SCHEDULE
-    registered_schedule_render = get_upcoming_appointment_schedule(db, region_id, email, user_type)
 
     # CONSULTATION_SCHEDULE
     phy_sch_today = get_all_schedule_by_date(db, region_id, datetime.now())
 
-    
+    # REGISTERED_CONSULTATION_SCHEDULE
+    registered_schedule_render = get_upcoming_appointment_schedule(db, region_id, email, user_type)
 
     return render_template(template, 
         Name="Dashboard", 
@@ -111,12 +109,15 @@ def register_consultation():
                 day = start_date.strftime('%A')
                 time = start_date.strftime('%H:%M')
                 date = start_date.strftime('%Y-%m-%d')
-                timeslots.append([day, time, date, f'{id}:{physician_id}'])
+                
+                is_available = start_date > datetime.now()
+
+                timeslots.append([day, time, date, f'{id}:{physician_id}', is_available])
 
         # rendering 
         for timeslot in timeslots:
-            day, time, date, sch_phy = timeslot
-            timeslots_render.append([physician_name, physician_specialization, day, date, time, sch_phy])
+            day, time, date, sch_phy, is_available = timeslot
+            timeslots_render.append([physician_name, physician_specialization, day, date, time, sch_phy, is_available])
 
     elif selected_date:
         timeslots_render = get_all_schedule_by_date(db, region_id, selected_date)

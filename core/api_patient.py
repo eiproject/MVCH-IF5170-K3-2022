@@ -61,6 +61,7 @@ def create_appointment():
         return jsonify({"message": "Only for Registered patient"}), 400
 
     sch_phy = request.form.get('sch_phy')
+    print(sch_phy)
     schedule_id, physician_mail = sch_phy.split(':')
 
     appointment_key = CreatePatientAppointmentKey(region_id, email)
@@ -70,8 +71,8 @@ def create_appointment():
     for app_id in appointment_ids:
         app_id = int(app_id)
         app_key = CreateAppointmentKey(region_id, app_id)
-        schedule_id = db.hget(app_key, 'schedule_id')
-        registered_schedule_ids.append(int(schedule_id))
+        sch_id = db.hget(app_key, 'schedule_id')
+        registered_schedule_ids.append(int(sch_id))
 
     if schedule_id not in registered_schedule_ids:
         store_appointment(
