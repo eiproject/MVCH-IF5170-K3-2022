@@ -1,23 +1,6 @@
 {% extends "dashboard/layout.html" %}
 
 {% block content %}
-<div id="modal" class="fixed left-0 top-0 w-full h-full bg-green_dark bg-opacity-90 hidden">
-  <div class="mt-40 flex justify-center items-center">
-    <div class="bg-white rounded-xl p-10">
-      <div class="flex flex-col justify-center items-center">
-        <p>Physician: <span id="selected-doctor"></span> (<span id="selected-speciality"></span>)</p>
-        <p>Time: <span id="selected-date"></span></p>
-      </div>
-      <p class="text-xs mt-4">Are you sure want to make this appointment?</p>
-      <div class="flex justify-center items-center mt-4">
-        <button class="text-xs font-bold duration-500 bg-green_light hover:bg-green_dark px-4 py-2 rounded-xl mx-2"
-          onclick="submit()">Yes</button>
-        <button class="text-xs font-bold duration-500 bg-red-100 hover:bg-red-300 px-4 py-2 rounded-xl mx-2"
-          onclick="cancel()">No</button>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="p-10 flex flex-col flex-grow">
   <p class="font-bold text-2xl">Register Consultation</p>
   <div class="bg-white rounded-xl border border-green_dark py-10 px-20 mt-4 flex-grow">
@@ -112,10 +95,10 @@
   const selected_doctor = document.getElementById('selected-doctor')
   const selected_speciality = document.getElementById('selected-speciality')
   const selected_date = document.getElementById('selected-date')
-  const modal = document.getElementById('modal')
+  const register_consultation_modal = document.getElementById('register-consultation-modal')
 
   function doSelect(button_id){
-    modal.classList.remove('hidden')
+    register_consultation_modal.classList.remove('hidden')
     let selected_row = button_id.slice(1, button_id.length-1).replaceAll("'", '').split(', ')
     selected_doctor.innerHTML = selected_row[0]
     selected_speciality.innerHTML = selected_row[1]
@@ -124,7 +107,7 @@
   }
 
   function cancel(){
-    modal.classList.add('hidden')
+    register_consultation_modal.classList.add('hidden')
   }
 
   function submit(){

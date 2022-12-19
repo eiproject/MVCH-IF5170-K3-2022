@@ -13,20 +13,15 @@
           <th>Date</th>
           <th>Time</th>
         </tr>
-        <tr class="h-10">
-          <td>1</td>
-          <td>Patient A</td>
-          <td class="text-center">Day a</td>
-          <td class="text-center">date a</td>
-          <td class="text-center">time a</td>
+        {% for row in REGISTERED_CONSULTATION_SCHEDULE %}
+        <tr class="h-10 text-center">
+          <td>{{ loop.index }}</td>
+          <td>{{ row[5] }}</td>
+          <td>{{ row[2] }}</td>
+          <td>{{ row[3] }}</td>
+          <td>{{ row[4] }}</td>
         </tr>
-        <tr class="h-10">
-          <td>2</td>
-          <td>Patient A</td>
-          <td class="text-center">Day a</td>
-          <td class="text-center">date a</td>
-          <td class="text-center">time a</td>
-        </tr>
+        {% endfor %}
       </table>
     </div>
   </div>

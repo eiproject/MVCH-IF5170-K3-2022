@@ -7,19 +7,22 @@
   <div class="flex flex-grow">
     <div class="mr-2 flex flex-col flex-grow">
       <div class="flex justify-center bg-white rounded-xl border border-green_dark p-2 mb-2">
-        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500">
+        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500"
+          onclick="window.location.href='/dashboard/consultation-schedule'">
           <div class="flex justify-center items-center">
             <i class="fa-regular fa-calendar-days fa-2xl mr-2"></i>
             <p class="text-left">Consultation Schedule</p>
           </div>
         </button>
-        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500">
+        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500"
+          onclick="window.location.href='/dashboard/doctor-schedule'">
           <div class="flex justify-center items-center">
             <i class="fa-regular fa-calendar fa-2xl mr-2"></i>
             <p class="text-left">Doctor Schedule</p>
           </div>
         </button>
-        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500">
+        <button class="px-8 py-6 bg-green_light border border-green_dark rounded-xl w-40 h-24 mx-1 hover:bg-green_dark duration-500"
+          onclick="window.location.href='/dashboard/patient-list'">
           <div class="flex justify-center items-center">
             <i class="fa-solid fa-user-group fa-2xl mr-2"></i>
             <p class="text-left">Patient</p>
@@ -27,7 +30,7 @@
         </button>
       </div>
       <div class="flex flex-col bg-white rounded-xl border border-green_dark p-2 flex-grow">
-        <p class="font-bold">Registered Teleconsultation Schedule</p>
+        <p class="font-bold">Upcoming Consultation Schedule</p>
         <div class="my-4 flex flex-col">
           <table>
             <tr class="border-b border-t border-green_dark">
@@ -37,13 +40,17 @@
               <th>Date</th>
               <th>Time</th>
             </tr>
+            {% for row in REGISTERED_CONSULTATION_SCHEDULE %}
             <tr class="text-center">
-              <td>1</td>
-              <td>Patient A</td>
-              <td>Day A</td>
-              <td>Date A</td>
-              <td>Time A</td>
+              <td>{{ loop.index }}</td>
+              <td id="{{ row[6] }}" class="bg-white hover:bg-green_dark duration-500 cursor-pointer" onclick="doSelect(this.id)">
+                <p class="underline" href="">{{ row[5] }}</p>
+              </td>
+              <td>{{ row[2] }}</td>
+              <td>{{ row[3] }}</td>
+              <td>{{ row[4] }}</td>
             </tr>
+            {% endfor %}
           </table>
         </div>
       </div>
@@ -53,4 +60,48 @@
 {% endblock %}
 
 {% block script %}
+
+<script>
+  const patient_info_modal = document.getElementById('patient-info-modal')
+  const field_name = document.getElementById('name')
+  const field_age = document.getElementById('age')
+  const field_address = document.getElementById('address')
+  const field_phone = document.getElementById('phone')
+  const field_gender = document.getElementById('gender')
+
+  function doSelect(user_id){
+    patient_info_modal.classList.remove('hidden')
+
+    var bodyFormData = new FormData();
+    bodyFormData.append('user_id', user_id);
+
+    axios({
+        method: "post",
+        url: window.location.origin + '/api/patient-information',
+        data: bodyFormData,
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+      })
+      .then(function (response) {
+        field_name.innerHTML = response.data['data']['name']
+        field_age.innerHTML = response.data['data']['age']
+        field_address.innerHTML = response.data['data']['address']
+        field_phone.innerHTML = response.data['data']['phone']
+        field_gender.innerHTML = response.data['data']['gender']
+      })
+      .catch(function (error) {
+        if (error.response) {
+          if (error.response.status === 400) {
+            error_logger.classList.remove('hidden');
+            error_logger.innerHTML = error.response.data['message'];
+          }
+        }
+      });
+  }
+
+  function cancel(){
+    patient_info_modal.classList.add('hidden')
+  }
+</script>
 {% endblock %}

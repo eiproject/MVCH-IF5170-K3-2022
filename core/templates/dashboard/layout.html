@@ -7,6 +7,60 @@
 
 {% block body %}
 <body>
+  <div id="patient-info-modal" class="fixed left-0 top-0 w-full h-full bg-green_dark bg-opacity-90 hidden">
+    <div class="mt-40 flex justify-center items-center">
+      <div class="bg-white rounded-xl py-10 px-20">
+        <div class="flex flex-col">
+          <p class="font-bold">Patient Information</p>
+          <table>
+            <tr>
+              <td>Name</td>
+              <td><span id="name"></span></td>
+            </tr>
+            <tr>
+              <td>Age</td>
+              <td><span id="age"></span></td>
+            </tr>
+            <tr>
+              <td>Address</td>
+              <td><span id="address"></span></td>
+            </tr>
+            <tr>
+              <td>Phone</td>
+              <td><span id="phone"></span></td>
+            </tr>
+            <tr>
+              <td>Gender</td>
+              <td><span id="gender"></span></td>
+            </tr>
+          </table>
+        </div>
+        <div class="flex justify-center items-center mt-4">
+          <button class="text-xs font-bold duration-500 bg-red-100 hover:bg-red-300 px-4 py-2 rounded-xl mx-2"
+            onclick="cancel()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="register-consultation-modal" class="fixed left-0 top-0 w-full h-full bg-green_dark bg-opacity-90 hidden">
+    <div class="mt-40 flex justify-center items-center">
+      <div class="bg-white rounded-xl p-10">
+        <div class="flex flex-col justify-center items-center">
+          <p>Physician: <span id="selected-doctor"></span> (<span id="selected-speciality"></span>)</p>
+          <p>Time: <span id="selected-date"></span></p>
+        </div>
+        <p class="text-xs mt-4">Are you sure want to make this appointment?</p>
+        <div class="flex justify-center items-center mt-4">
+          <button class="text-xs font-bold duration-500 bg-green_light hover:bg-green_dark px-4 py-2 rounded-xl mx-2"
+            onclick="submit()">Yes</button>
+          <button class="text-xs font-bold duration-500 bg-red-100 hover:bg-red-300 px-4 py-2 rounded-xl mx-2"
+            onclick="cancel()">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="flex min-h-screen bg-green_dark">
     <div id="sidebar" class="w-3/12 flex flex-col items-center justify-between">
       <div class="my-20 flex flex-col justify-center items-center w-1/2">
@@ -18,13 +72,13 @@
         {% if USER_TYPE == 'patient'%}
         <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
           href="/dashboard/patient-registration">
-          Register Teleconsultation
+          Register Consultation
         </a>
         <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
           href="/dashboard/doctor-schedule">Doctor Schedule</a>
         {% elif USER_TYPE == 'doctor'%}
         <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
-          href="/dashboard/consultation-schedule">Teleconsultation Schedule</a>
+          href="/dashboard/consultation-schedule">Consultation Schedule</a>
         <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 
           href="/dashboard/doctor-schedule">Doctor Schedule</a>
         <a class="border-b border-gray-500 w-full text-center my-2 py-1 hover:bg-green_light duration-500 rounded-t-xl" 

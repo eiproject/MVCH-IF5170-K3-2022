@@ -3,7 +3,7 @@ from . import app, db, region_id
 from core.entity import UserType
 from core.key import CreatePatientKey, GetUserIdFromKey
 from core.views_dashboard import check_jwt
-from core.context import store_appointment
+from core.context import get_patient_information, store_appointment
 
 from flask import jsonify, request, session
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -76,6 +76,25 @@ def create_appointment():
     json_return = {
         "code": code,
         "data": 'OK',
+        "message": message
+    }
+    return jsonify(json_return), code
+ 
+
+@app.route("/api/patient-information", methods=["POST"])
+def patient_information():
+    code = HTTPStatus.OK
+    message = "OK"
+    email, user_type = check_jwt(db, session)
+    if user_type != UserType.PHYSICIAN:
+        return jsonify({"message": "Only for physician"}), 400
+
+    patient_id = request.form.get('user_id')
+    patient_info = get_patient_information(db, region_id, patient_id)
+    print(patient_info)
+    json_return = {
+        "code": code,
+        "data": patient_info,
         "message": message
     }
     return jsonify(json_return), code

@@ -1,5 +1,5 @@
 from typing import Tuple
-from core.context import get_all_schedule_by_date, get_employee_name, get_user_fullname, get_physician_spesialization
+from core.context import get_all_schedule_by_date, get_employee_name, get_upcoming_appointment_schedule, get_user_fullname, get_physician_spesialization
 from core.entity import UserType
 from core.key import CreateAppointmentKey, CreateNurseAppointmentKey, CreatePatientKey, CreatePhysicianAppointmentKey, CreatePhysicianScheduleKey, CreateScheduleKey, generate_dummy_schedule, GetUserIdFromKey, CreatePatientAppointmentKey, generate_dummy_employee
 from core.util import check_jwt, get_session_key
@@ -14,46 +14,15 @@ def dashboard():
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
 
-    now = datetime.now()
-    appointment_key = None
     if user_type == UserType.PATIENT:
         template = 'dashboard/patient-home.html'
-        appointment_key = CreatePatientAppointmentKey(region_id, email)
     elif user_type == UserType.PHYSICIAN:
         template = 'dashboard/doctor-home.html'
-        appointment_key = CreatePhysicianAppointmentKey(region_id, email)
     elif user_type == UserType.NURSE:
         template = 'dashboard/nurse-home.html'
-        appointment_key = CreateNurseAppointmentKey(region_id, email)
     
-    appointment_ids = db.smembers(appointment_key)
-    appointment_ids = [int(v) for v in appointment_ids] if appointment_ids else []
-
     # REGISTERED_CONSULTATION_SCHEDULE
-    registered_schedule_render = []
-    for id in appointment_ids:
-        app_key = CreateAppointmentKey(region_id, id)
-        app_data = db.hgetall(app_key)
-        physician_id = app_data[b'physician_id'].decode('utf-8')
-        physician_specialization = get_physician_spesialization(db, region_id, physician_id)
-        physician_name = get_employee_name(db, region_id, physician_id)
-
-        schedule_id = app_data[b'schedule_id'].decode('utf-8')
-
-        sch_key = CreateScheduleKey(region_id, schedule_id)
-        sch_data = db.hgetall(sch_key)
-        start = sch_data[b'start'].decode('utf-8')
-
-        start_date = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
-        print(start_date)
-        if start_date > now:
-            day = start_date.strftime('%A')
-            time = start_date.strftime('%H:%M')
-            date = start_date.strftime('%Y-%m-%d')
-
-            registered_schedule_render.append([
-                physician_name, physician_specialization, day, date, time
-            ])
+    registered_schedule_render = get_upcoming_appointment_schedule(db, region_id, email, user_type)
 
     # CONSULTATION_SCHEDULE
     phy_sch_today = get_all_schedule_by_date(db, region_id, datetime.now())
@@ -310,13 +279,15 @@ def consultation_schedule():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
-    
+    registered_schedule_render = get_upcoming_appointment_schedule(db, region_id, email, user_type)
+
     return render_template(
         'dashboard/doctor-consultation-schedule.html', 
         Name="Consultation Schedule", 
         EMAIL=email, 
         USER_TYPE=user_type, 
         USER_FULLNAME=user_fullname,
+        REGISTERED_CONSULTATION_SCHEDULE=registered_schedule_render,
         )
 
     
