@@ -39,7 +39,7 @@ db.init_app(app)
 bcrypt = Bcrypt(app)
 
 region = 'indo'
-hospital_id = 'ID'
+region_id = 'ID'
 
 from core import \
     views, views_dashboard, \

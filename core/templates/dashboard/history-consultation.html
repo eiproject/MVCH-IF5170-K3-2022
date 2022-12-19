@@ -11,26 +11,18 @@
           <th class="py-2">Doctor</th>
           <th>Speciality</th>
           <th>Day</th>
-          <th>Time</th>
           <th>Date</th>
-          <th>Detail</th>
+          <th>Time</th>
         </tr>
+        {% for row in COSULTATION_HISTORY %}
         <tr>
-          <td>Doctor A</td>
-          <td>Speciality A</td>
-          <td class="text-center">Day A</td>
-          <td class="text-center">Time A</td>
-          <td class="text-center">Date A</td>
-          <td class="text-center">Detail A</td>
+          <td>{{ row[0] }}</td>
+          <td>{{ row[1] }}</td>
+          <td class="text-center">{{ row[2] }}</td>
+          <td class="text-center">{{ row[3] }}</td>
+          <td class="text-center">{{ row[4] }}</td>
         </tr>
-        <tr>
-          <td>Doctor B</td>
-          <td>Speciality B</td>
-          <td class="text-center">Day B</td>
-          <td class="text-center">Time B</td>
-          <td class="text-center">Date B</td>
-          <td class="text-center">Detail B</td>
-        </tr>
+        {% endfor %}
       </table>
       {% elif USER_TYPE == 'doctor' %}
       <table>
@@ -66,16 +58,18 @@
           <th>Date</th>
           <th>Time</th>
         </tr>
+        {% for row in COSULTATION_HISTORY %}
         <tr>
-          <td>1</td>
+          <td>{{ loop.index }}</td>
           <td>
-            <p class="font-bold">Doctor A</p>
-            <p class="text-xs">Speciality A</p>
+            <p class="font-bold">{{ row[0] }}</p>
+            <p class="text-xs">{{ row[1] }}</p>
           </td>
-          <td class="text-center">Day A</td>
+          <td class="text-center">{{ row[0] }}</td>
           <td class="text-center">Date A</td>
           <td class="text-center">Time A</td>
         </tr>
+        {% endfor %}
         <tr>
           <td>2</td>
           <td>

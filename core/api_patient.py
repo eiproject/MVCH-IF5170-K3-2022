@@ -1,4 +1,4 @@
-from . import app, db, hospital_id
+from . import app, db, region_id
 
 from core.entity import UserType
 from core.key import CreatePatientKey, GetUserIdFromKey
@@ -18,7 +18,7 @@ def register_patient():
     if user_type != UserType.PATIENT:
         return jsonify({"message": "Only for patient"}), 400
 
-    patient_key = CreatePatientKey(hospital_id, email)
+    patient_key = CreatePatientKey(region_id, email)
     if db.hgetall(patient_key):
         return jsonify({"message": "Only for unregistered patient"}), 400
 
@@ -56,7 +56,7 @@ def create_appointment():
     if user_type != UserType.PATIENT:
         return jsonify({"message": "Only for patient"}), 400
 
-    patient_key = CreatePatientKey(hospital_id, email)
+    patient_key = CreatePatientKey(region_id, email)
     if not db.hgetall(patient_key):
         return jsonify({"message": "Only for Registered patient"}), 400
 
@@ -65,7 +65,7 @@ def create_appointment():
 
     store_appointment(
         db=db, 
-        hospital_id=hospital_id, 
+        region_id=region_id, 
         schedule_id=schedule_id, 
         patient_id=email, 
         physician_id=physician_mail,

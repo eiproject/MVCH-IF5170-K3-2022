@@ -4,15 +4,15 @@ import redis
 from core.key import *
 
 
-def get_physician_spesialization(db:redis.Redis, hospital_id, physician_id):
-    key = CreatePhysicianKey(hospital_id, physician_id)
+def get_physician_spesialization(db:redis.Redis, region_id, physician_id):
+    key = CreatePhysicianKey(region_id, physician_id)
     specialization = db.hget(key, 'specialization')
     specialization = specialization.decode('utf-8')
     return specialization
 
 
-def store_appointment(db:redis.Redis, hospital_id, schedule_id, patient_id, physician_id, nurse_id, notes):
-    latest_app_key = CreateLatestAppointmentIdKey(hospital_id)
+def store_appointment(db:redis.Redis, region_id, schedule_id, patient_id, physician_id, nurse_id, notes):
+    latest_app_key = CreateLatestAppointmentIdKey(region_id)
     
     # check latest appointment id
     latest_app_id = db.get(latest_app_key)
@@ -24,10 +24,10 @@ def store_appointment(db:redis.Redis, hospital_id, schedule_id, patient_id, phys
 
     appointment_id = latest_app_id+1
 
-    appointment_key = CreateAppointmentKey(hospital_id, appointment_id)
-    patient_appointment_key = CreatePatientAppointmentKey(hospital_id, patient_id)
-    physician_appointment_key = CreatePhysicianAppointmentKey(hospital_id, physician_id)
-    nurse_appointment_key = CreateNurseAppointmentKey(hospital_id, nurse_id)
+    appointment_key = CreateAppointmentKey(region_id, appointment_id)
+    patient_appointment_key = CreatePatientAppointmentKey(region_id, patient_id)
+    physician_appointment_key = CreatePhysicianAppointmentKey(region_id, physician_id)
+    nurse_appointment_key = CreateNurseAppointmentKey(region_id, nurse_id)
 
     db.hset(
         name=appointment_key, 
@@ -47,8 +47,8 @@ def store_appointment(db:redis.Redis, hospital_id, schedule_id, patient_id, phys
     db.set(latest_app_key, appointment_id)
     return 
 
-def get_all_physician_id(db:redis.Redis, hospital_id):
-    physicians = db.keys(f'*{hospital_id}*PhysicianSchedule*')
+def get_all_physician_id(db:redis.Redis, region_id):
+    physicians = db.keys(f'*{region_id}*PhysicianSchedule*')
     physician_ids = []
     for phy_sch_id in physicians:
         physician_ids.append(
@@ -57,23 +57,23 @@ def get_all_physician_id(db:redis.Redis, hospital_id):
     return physician_ids
     
 
-def get_all_schedule_by_date(db:redis.Redis, hospital_id, datetime_obj:datetime):
+def get_all_schedule_by_date(db:redis.Redis, region_id, datetime_obj:datetime):
     today_phy_sched = []
 
-    phy_ids = get_all_physician_id(db, hospital_id)
+    phy_ids = get_all_physician_id(db, region_id)
     for phy_id in phy_ids:
         phy_name = phy_id
-        phy_scpecialization = get_physician_spesialization(db, hospital_id, phy_id)
+        phy_scpecialization = get_physician_spesialization(db, region_id, phy_id)
 
         # loop to phy schedule and get today schedule
-        phy_sch_key = CreatePhysicianScheduleKey(hospital_id, phy_id)
+        phy_sch_key = CreatePhysicianScheduleKey(region_id, phy_id)
         
         sch_list = db.smembers(name=phy_sch_key)
         sch_list = [int(v) for v in sch_list]
         sch_list.sort()
 
         for sch_id in sch_list:
-            sch_key = CreateScheduleKey(hospital_id, sch_id)
+            sch_key = CreateScheduleKey(region_id, sch_id)
             sch_data = db.hgetall(sch_key)
             start = sch_data[b'start'].decode('utf-8')
             start_date = datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")

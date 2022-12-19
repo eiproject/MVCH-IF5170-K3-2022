@@ -3,7 +3,7 @@ from http import HTTPStatus
 from flask import jsonify, request, session
 
 from core.key import CreateUserKey
-from . import app, db, BASE_DIR, region, hospital_id
+from . import app, db, BASE_DIR, region, region_id
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
 
@@ -12,7 +12,7 @@ def register():
     code = HTTPStatus.OK
     message = "OK"
     email, password = request.form.get('email'), request.form.get('password')
-    user_id_key = CreateUserKey(hospital_id, email)
+    user_id_key = CreateUserKey(region_id, email)
     is_email_exists = db.hget(user_id_key, 'password')
 
     if (is_email_exists):
@@ -42,7 +42,7 @@ def login():
     message = "OK"
     jwt_token = None
     email, password = request.form.get('email'), request.form.get('password')
-    user_id_key = CreateUserKey(hospital_id, email)
+    user_id_key = CreateUserKey(region_id, email)
 
     is_email_exists = db.hget(user_id_key, 'password')
 
