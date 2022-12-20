@@ -1,5 +1,5 @@
 from . import app, db, region_id
-from core.context import get_all_schedule_by_date, get_employee_name, get_upcoming_appointment_schedule, get_user_fullname, get_physician_spesialization
+from core.context import get_all_schedule_by_date, get_employee_name, get_nurse_schedule, get_upcoming_appointment_schedule, get_user_fullname, get_physician_spesialization
 from core.entity import UserType
 from core.key import * 
 from core.setting import *
@@ -20,20 +20,24 @@ def dashboard():
         template = 'dashboard/doctor-home.html'
     elif user_type == UserType.NURSE:
         template = 'dashboard/nurse-home.html'
-
+    
     # CONSULTATION_SCHEDULE
     phy_sch_today = get_all_schedule_by_date(db, region_id, datetime.now())
 
     # REGISTERED_CONSULTATION_SCHEDULE
     registered_schedule_render = get_upcoming_appointment_schedule(db, region_id, email, user_type)
 
-    return render_template(template, 
-        Name="Dashboard", 
-        EMAIL=email, 
+    # NURSE SCHEDULE
+    nurse_schedule = get_nurse_schedule(db, region_id, email)
+
+    return render_template(template,
+        Name="Dashboard",
+        EMAIL=email,
         USER_TYPE=user_type,
         USER_FULLNAME=user_fullname,
         REGISTERED_CONSULTATION_SCHEDULE=registered_schedule_render,
         CONSULTATION_SCHEDULE=phy_sch_today,
+        NURSE_SCHEDULE=nurse_schedule,
         )
 
 
@@ -48,9 +52,9 @@ def patient_registration():
         return redirect('/dashboard/register-consultation')
 
     return render_template(
-        'dashboard/patient-registration.html', 
-        Name="Patient Registration", 
-        EMAIL=email, 
+        'dashboard/patient-registration.html',
+        Name="Patient Registration",
+        EMAIL=email,
         USER_TYPE=user_type, 
         USER_FULLNAME=user_fullname,
         )

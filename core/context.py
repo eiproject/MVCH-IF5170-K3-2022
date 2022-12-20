@@ -8,8 +8,12 @@ from core.setting import *
 
 def get_physician_spesialization(db:redis.Redis, region_id, physician_id):
     key = CreatePhysicianKey(region_id, physician_id)
-    specialization = db.hget(key, 'specialization')
-    specialization = specialization.decode('utf-8')
+    specialization = db.hget(key, 'specialization').decode('utf-8')
+    return specialization
+
+def get_nurse_spesialization(db:redis.Redis, region_id, nurse_id):
+    key = CreateNurseKey(region_id, nurse_id)
+    specialization = db.hget(key, 'specialization').decode('utf-8')
     return specialization
 
 def get_employee_name(db:redis.Redis, region_id, user_id):
@@ -25,7 +29,10 @@ def get_user_fullname(db:redis.Redis, region_id, user_id, user_type):
         key = CreateEmployeeKey(region_id, user_id)
 
     name = db.hget(key, 'name')
-    name = name.decode('utf-8')
+    if name:
+        name = name.decode('utf-8')
+    else:
+        name = user_id.split('@')[0]
     return name
 
 def store_appointment(db:redis.Redis, region_id, schedule_id, patient_id, physician_id, nurse_id, notes):
@@ -187,3 +194,57 @@ def get_patient_information(db:redis.Redis, region_id, user_id):
     }
 
     return info
+
+
+def get_nurse_schedule(db:redis.Redis, region_id, nurse_id):
+    nurse_sch_key = CreateNurseScheduleKey(region_id, nurse_id)
+    nurse_sch_ids = db.smembers(nurse_sch_key)
+    nurse_sch_ids = sorted([int(i) for i in nurse_sch_ids])
+
+    nurse_specialization = get_nurse_spesialization(db, region_id, nurse_id)
+
+    phy_sch_data = {}
+
+    phy_sch_keys = db.keys('*PhysicianSchedule*')
+    for phy_sch_key in phy_sch_keys:
+        phy_id = GetUserIdFromKey(phy_sch_key.decode('utf-8'))
+        phy_specialization = get_physician_spesialization(db, region_id, phy_id)
+        
+        if nurse_specialization == phy_specialization:
+            phy_sch_ids = db.smembers(phy_sch_key)
+            phy_sch_ids = sorted([int(i) for i in phy_sch_ids])
+            phy_sch_data[phy_id] = phy_sch_ids
+    
+    nurse_sch_data = {}
+
+    for nurse_sch_id in nurse_sch_ids:
+        print(nurse_sch_id)
+        sch_key = CreateScheduleKey(region_id, nurse_sch_id)
+        start = db.hget(sch_key, 'start').decode('utf-8')
+        start_date = datetime.strptime(start, DATE_FORMAT)
+
+        if start_date.date() >= datetime.now().date():
+            day = start_date.strftime('%A')
+            time = start_date.strftime('%H:%M')
+            date = start_date.strftime('%Y-%m-%d')
+
+            physician = ['dr. AABC']
+            for k in phy_sch_data:
+                if nurse_sch_id in  phy_sch_data[k]:
+                    physician_name = get_employee_name(db, region_id, k)
+                    physician.append(physician_name)
+            
+            nurse_sch_data[nurse_sch_id] = {
+                'day': day,
+                'time': time,
+                'date': date,
+                'speciality': nurse_specialization,
+                'physician': physician,
+            }
+
+    print(nurse_sch_data)
+    return nurse_sch_data
+
+
+    
+    

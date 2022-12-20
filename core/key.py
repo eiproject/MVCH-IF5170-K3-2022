@@ -19,6 +19,9 @@ def CreateScheduleKey(region_id:str, schedule_id:int) -> str:
 def CreatePhysicianScheduleKey(region_id:str, user_id:str) -> str:
     return f'{region_id}:PhysicianSchedule[id:{user_id}]'
 
+def CreateNurseScheduleKey(region_id:str, user_id:str) -> str:
+    return f'{region_id}:NurseSchedule[id:{user_id}]'
+
 def CreateAppointmentKey(region_id:str, appointment_id:int) -> str:
     return f'{region_id}:Appointment[id:{appointment_id}]'
 
@@ -67,6 +70,14 @@ def generate_dummy_phy_schedule(db, region_id, email):
     for s in schedules:
         db.sadd(key, s)
 
+def generate_dummy_nurse_schedule(db, region_id, email):
+    import random 
+    random.seed(1)
+    schedules = random.choices(list(range(0, 50)), k=10)
+    key = CreateNurseScheduleKey(region_id, email)
+    for s in schedules:
+        db.sadd(key, s)
+
 
 def generate_dummy_employee(db, region_id, email):
     data = {
@@ -83,10 +94,39 @@ def generate_dummy_employee(db, region_id, email):
         mapping=data
     )
 
+def generate_dummy_nurse(db, region_id, email):
+    # password password_hash user_type user_type
+    user_key = CreateUserKey(region_id, email)
+    
+    # NIC nic specialization specialization
+    nurse_key = CreateNurseKey(region_id, email)
+    nurse_data = {
+        'NIC': '218531458156',
+        'specialization': 'Dentist',
+    }
+    
+    # name name dob dob  address address phone phone gender gender hospital_id hospital_id
+    employee_key = CreateEmployeeKey(region_id, email)
+    employee_data = {
+        'name': 'Sernu,ns.',
+        'dob': '04/08/1990',
+        'address': '913-2855 Justo. Rd.',
+        'phone': '(026) 7881 4576',
+        'gender': 'L',
+        'hospital_id': 'mvch001'
+        }
+
+    db.hset(name=employee_key, mapping=employee_data)
+    db.hset(name=nurse_key, mapping=nurse_data)
+
+
+
 
 # generate_dummy_schedule(db, region_id)
 # generate_dummy_phy_schedule(db, region_id, 'doctor@gmail.com')
 # generate_dummy_employee(db, region_id, 'doctor@gmail.com')
+
+# generate_dummy_nurse_schedule(db, region_id, 'nurse@gmail.com')
 
 
 # hset ID:Physician[id:doctor@gmail.com] NIC 217836271863 specialization Dentist
