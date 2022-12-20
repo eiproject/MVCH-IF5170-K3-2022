@@ -3,6 +3,7 @@ bcrypt==3.2.0
 cffi==1.14.6
 click==8.0.1
 colorama==0.4.4
+debugpy==1.6.4
 Flask==2.0.1
 Flask-Bcrypt==0.7.1
 Flask-JWT-Extended==4.3.0
