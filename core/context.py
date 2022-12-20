@@ -8,12 +8,14 @@ from core.setting import *
 
 def get_physician_spesialization(db:redis.Redis, region_id, physician_id):
     key = CreatePhysicianKey(region_id, physician_id)
-    specialization = db.hget(key, 'specialization').decode('utf-8')
+    specialization = db.hget(key, 'specialization')
+    specialization = specialization.decode('utf-8') if specialization else ''
     return specialization
 
 def get_nurse_spesialization(db:redis.Redis, region_id, nurse_id):
     key = CreateNurseKey(region_id, nurse_id)
-    specialization = db.hget(key, 'specialization').decode('utf-8')
+    specialization = db.hget(key, 'specialization')
+    specialization = specialization.decode('utf-8') if specialization else ''
     return specialization
 
 def get_employee_name(db:redis.Redis, region_id, user_id):
