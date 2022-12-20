@@ -228,13 +228,22 @@ def doctor_schedule():
     
     # search using input from field
     search_keyword = request.args.get('doctor')
-    search_result = db.keys(f'*PhysicianSchedule*{search_keyword}*')
-    search_result = search_result[0].decode('utf-8') \
-        if search_result else None
+    phy_sch_key = None
 
-    if search_keyword and search_result:
-        physician_email = GetUserIdFromKey(search_result)
-        physician_key = search_result
+    if search_keyword:
+        search_keyword = search_keyword.lower() if search_keyword else None
+        keyword_names = search_keyword.split(' ')
+
+        physician_ids = db.sinter(keyword_names)
+        physician_ids = [p.decode('utf-8') for p in physician_ids]
+
+        if len(physician_ids) > 0:
+            physician_id = physician_ids[0]
+            phy_sch_key = CreatePhysicianScheduleKey(region_id, physician_id)
+
+    if phy_sch_key:
+        physician_email = GetUserIdFromKey(phy_sch_key)
+        physician_key = phy_sch_key
         physician_specialization = get_physician_spesialization(db, region_id, physician_email)
         physician_name = get_employee_name(db, region_id, physician_email)
     elif user_type == UserType.PHYSICIAN:
