@@ -198,7 +198,7 @@ def get_patient_information(db:redis.Redis, region_id, user_id):
     return info
 
 
-def get_nurse_schedule(db:redis.Redis, region_id, nurse_id):
+def get_nurse_schedule(db:redis.Redis, region_id, nurse_id, is_future=True):
     nurse_sch_key = CreateNurseScheduleKey(region_id, nurse_id)
     nurse_sch_ids = db.smembers(nurse_sch_key)
     nurse_sch_ids = sorted([int(i) for i in nurse_sch_ids])
@@ -225,7 +225,12 @@ def get_nurse_schedule(db:redis.Redis, region_id, nurse_id):
         start = db.hget(sch_key, 'start').decode('utf-8')
         start_date = datetime.strptime(start, DATE_FORMAT)
 
-        if start_date.date() >= datetime.now().date():
+        if is_future:
+            is_valid = start_date.date() >= datetime.now().date()
+        else:
+            is_valid = start_date.date() < datetime.now().date()
+
+        if is_valid:
             day = start_date.strftime('%A')
             time = start_date.strftime('%H:%M')
             date = start_date.strftime('%Y-%m-%d')

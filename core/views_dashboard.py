@@ -1,5 +1,5 @@
 from . import app, db, region_id
-from core.context import get_all_schedule_by_date, get_employee_name, get_nurse_schedule, get_upcoming_appointment_schedule, get_user_fullname, get_physician_spesialization
+from core.context import get_all_schedule_by_date, get_employee_name, get_nurse_schedule, get_nurse_spesialization, get_upcoming_appointment_schedule, get_user_fullname, get_physician_spesialization
 from core.entity import UserType
 from core.key import * 
 from core.setting import *
@@ -35,7 +35,6 @@ def dashboard():
 
         # REGISTERED_CONSULTATION_SCHEDULE
         registered_schedule_render = get_upcoming_appointment_schedule(db, region_id, email, user_type)
-    
     
 
     return render_template(template,
@@ -160,37 +159,43 @@ def history_consultation():
         appointment_key = CreatePhysicianAppointmentKey(region_id, email)
     elif user_type == UserType.NURSE:
         appointment_key = CreateNurseAppointmentKey(region_id, email)
-
-    appointment_ids = db.smembers(appointment_key)
-    appointment_ids = [int(a) for a in appointment_ids]
-    appointment_ids.sort()
     
     consultation_history = []
+    nurse_schedule_history = {}
 
-    for app_id in appointment_ids:
-        app_key = CreateAppointmentKey(region_id, app_id)
-        app_data = db.hgetall(app_key)
-        sch_id = int(app_data[b'schedule_id'])
+    if user_type in [UserType.PATIENT, UserType.PHYSICIAN]:
+        appointment_ids = db.smembers(appointment_key)
+        appointment_ids = [int(a) for a in appointment_ids]
+        appointment_ids.sort()
+
+        for app_id in appointment_ids:
+            app_key = CreateAppointmentKey(region_id, app_id)
+            app_data = db.hgetall(app_key)
+            sch_id = int(app_data[b'schedule_id'])
+            
+            sch_key = CreateScheduleKey(region_id, sch_id)
+            sch_data = db.hgetall(sch_key)
+            end = sch_data[b'end'].decode('utf-8')
+            end_datetime = datetime.strptime(end, DATE_FORMAT)
+
+            if end_datetime < datetime.now():
+                physician_id = app_data[b'physician_id'].decode('utf-8')
+                physician_specialization = get_physician_spesialization(db, region_id, physician_id)
+                physician_name = get_employee_name(db, region_id, physician_id)
+
+                start = sch_data[b'start'].decode('utf-8')
+                start_date = datetime.strptime(start, DATE_FORMAT)
+
+                day = start_date.strftime('%A')
+                time = start_date.strftime('%H:%M')
+                date = start_date.strftime('%Y-%m-%d')
+                consultation_history.append([
+                    physician_name, physician_specialization, day, date, time
+                ])
+
+    else:
+        nurse_schedule_history = get_nurse_schedule(db, region_id, email, is_future=False)
         
-        sch_key = CreateScheduleKey(region_id, sch_id)
-        sch_data = db.hgetall(sch_key)
-        end = sch_data[b'end'].decode('utf-8')
-        end_datetime = datetime.strptime(end, DATE_FORMAT)
-
-        if end_datetime < datetime.now():
-            physician_id = app_data[b'physician_id'].decode('utf-8')
-            physician_specialization = get_physician_spesialization(db, region_id, physician_id)
-            physician_name = get_employee_name(db, region_id, physician_id)
-
-            start = sch_data[b'start'].decode('utf-8')
-            start_date = datetime.strptime(start, DATE_FORMAT)
-
-            day = start_date.strftime('%A')
-            time = start_date.strftime('%H:%M')
-            date = start_date.strftime('%Y-%m-%d')
-            consultation_history.append([
-                physician_name, physician_specialization, day, date, time
-            ])
 
     return render_template(
         'dashboard/history-consultation.html', 
@@ -199,6 +204,7 @@ def history_consultation():
         USER_TYPE=user_type, 
         USER_FULLNAME=user_fullname,
         COSULTATION_HISTORY=consultation_history,
+        NURSE_SCHEDULE_HISTORY=nurse_schedule_history,
         )
 
 
@@ -324,12 +330,66 @@ def patient_list():
 def nurse_schedule():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
-    user_fullname = get_user_fullname(db, region_id, email, user_type)
     
+    nurse_name = get_user_fullname(db, region_id, email, user_type)
+    nurse_specialization = get_nurse_spesialization(db, region_id, email)
+    nurse_sch_key = CreateNurseScheduleKey(region_id, email)
+
+    # generating timeslot
+    now = datetime.now()
+    thresh = now + timedelta(days=7)
+    schedule_ids = [int(v) for v in db.smembers(nurse_sch_key)]
+    schedule_ids.sort()
+    
+    timeslot = {}
+    for id in schedule_ids:
+        sch_key = CreateScheduleKey(region_id, id)
+        sch_data = db.hgetall(sch_key)
+        start = sch_data[b'start'].decode("utf-8")
+        end = sch_data[b'end'].decode("utf-8")
+
+        start_date = datetime.strptime(start, DATE_FORMAT)
+        
+        date_key = start_date.strftime("%m/%d %A")
+        hour = start_date.hour
+
+        if start_date.date() >= now.date() and  start_date.date() < thresh.date():
+            if date_key in timeslot:
+                timeslot[date_key].append(hour)
+            else:
+                timeslot[date_key] = [hour]
+    
+    # rendering 
+    header = ['Time']
+    for i in range(7):
+        t = now + timedelta(days=i)
+        d = t.strftime("%m/%d %A")
+        header.append(d)
+
+    timeslot_render = [header]
+
+    for hour in range(7, 19):
+        row = [f'{hour}:00']
+        for d_key in header[1:]:
+            if d_key in timeslot:
+                if hour in timeslot[d_key]:
+                    row.append(True)
+                else:
+                    row.append(False)
+            else:
+                row.append(False)
+        timeslot_render.append(row)
+    
+
+    print(timeslot_render)
     return render_template(
         'dashboard/nurse-schedule.html', 
         Name="Nurse Schedule", 
         EMAIL=email, 
         USER_TYPE=user_type, 
-        USER_FULLNAME=user_fullname,
+        USER_FULLNAME=nurse_name,
+        NURSE_NAME= nurse_name,
+        NURSE_SPECIALIZATION=nurse_specialization,
+        TIMESLOT_HEADER=timeslot_render[0],
+        TIMESLOT_ITEM=timeslot_render[1:],
         )

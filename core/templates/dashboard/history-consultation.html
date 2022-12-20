@@ -58,28 +58,22 @@
           <th>Date</th>
           <th>Time</th>
         </tr>
-        {% for row in COSULTATION_HISTORY %}
+        {% for key, value in NURSE_SCHEDULE_HISTORY.items() %}
         <tr>
-          <td>{{ loop.index }}</td>
-          <td>
-            <p class="font-bold">{{ row[0] }}</p>
-            <p class="text-xs">{{ row[1] }}</p>
+          <td class="border border-green_dark text-center">{{ loop.index }}</td>
+          <td class="border border-green_dark pl-4">
+            {% for phy_name in value['physician'] %}
+            <div class="flex flex-col justify-center mb-2">
+              <p class="font-bold">{{ phy_name }}</p>
+              <p class="text-xs">{{ value['speciality'] }}</p>
+            </div>
+            {% endfor %}
           </td>
-          <td class="text-center">{{ row[0] }}</td>
-          <td class="text-center">Date A</td>
-          <td class="text-center">Time A</td>
+          <td class="text-center border border-green_dark">{{ value['day'] }}</td>
+          <td class="text-center border border-green_dark">{{ value['date'] }}</td>
+          <td class="text-center border border-green_dark">{{ value['time'] }}</td>
         </tr>
         {% endfor %}
-        <tr>
-          <td>2</td>
-          <td>
-            <p class="font-bold">Doctor B</p>
-            <p class="text-xs">Speciality B</p>
-          </td>
-          <td class="text-center">Day B</td>
-          <td class="text-center">Date B</td>
-          <td class="text-center">Time B</td>
-        </tr>
       </table>
       {% endif %}
     </div>

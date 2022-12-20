@@ -11,58 +11,33 @@
         </p>
         <p>MONTH/YEAR schedule</p>
       </div>
+
       <table class="text-sm">
-        <tr class="border-b border-t border-green_dark">
-          <th class="py-2">Time</th>
-          <th>(11/19) Monday</th>
-          <th>(11/20) Tuesday</th>
-          <th>(11/21) Wednesday</th>
-          <th>(11/22) Thursday</th>
-          <th>(11/23) Friday</th>
-          <th>(11/24) Saturday</th>
-          <th>(11/25) Sunday</th>
-        </tr>
-        <tr class="text-center h-20">
-          <td class="border-b border-green_dark">07.00</td>
-          <td class="cursor-pointer border border-green_dark">
-            <p class="font-bold">Doctor Name, dr.</p>
-            <p class="text-xs">Speciality</p>
-          </td>
-          <td class="cursor-pointer border border-green_dark">
-            <p class="font-bold">Doctor Name, dr.</p>
-            <p class="text-xs">Speciality</p>
-          </td>
-          <td class="cursor-pointer border border-green_dark">
-            <p class="font-bold">Doctor Name, dr.</p>
-            <p class="text-xs">Speciality</p>
-          </td>
-          <td class="cursor-pointer border border-green_dark">
-            <p class="font-bold">Doctor Name, dr.</p>
-            <p class="text-xs">Speciality</p>
-          </td>
-          <td class="cursor-pointer border border-green_dark">
-            <p class="font-bold">Doctor Name, dr.</p>
-            <p class="text-xs">Speciality</p>
-          </td>
-          <td class="cursor-pointer border border-green_dark">
-            <p class="font-bold">Doctor Name, dr.</p>
-            <p class="text-xs">Speciality</p>
-          </td>
-          <td class="cursor-pointer border border-green_dark">
-            <p class="font-bold">Doctor Name, dr.</p>
-            <p class="text-xs">Speciality</p>
-          </td>
-        </tr>
-        <tr class="text-center h-10">
-          <td>08.00</td>
-          <td class="">-</td>
-          <td class="">-</td>
-          <td class="">-</td>
-          <td class="">-</td>
-          <td class="">-</td>
-          <td class="">-</td>
-          <td class="">-</td>
-        </tr>
+        <thead>
+          <tr>
+            {% for val in TIMESLOT_HEADER %}
+            <th class="py-2 border border-green_dark">{{ val }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody class="">
+          {% for row in TIMESLOT_ITEM %}
+          <tr class="text-center h-10">
+            {% for v in row %}
+              {% if v == True %}
+              <td class="bg-green_light hover:bg-green_dark duration-500 cursor-pointer border border-green_dark">
+                <p class="text-sm font-bold">{{ NURSE_NAME }}</p>
+                <p class="text-xs">{{ NURSE_SPECIALIZATION }}</p>
+              </td>
+              {% elif v == False %}
+              <td class="border border-green_dark">-</td>
+              {% else %}
+              <td class="border border-green_dark">{{ v }}</td>
+              {% endif %} 
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
       </table>
     </div>
   </div>
