@@ -23,7 +23,10 @@ logging.basicConfig(filename='mvch.log', level=logging.DEBUG,
 
 # Redis
 app.config['SECRET_KEY'] = 'changethis_BDy9asydnasdna98n^B&D*tsa87dvbats67asrv67r'
-app.config['REDIS_URL'] = 'redis://34.101.126.53:6379'
+if 'rizquuula/Playground/' in BASE_DIR:
+    app.config['REDIS_URL'] = 'redis://localhost:6379'
+else:
+    app.config['REDIS_URL'] = 'redis://34.101.126.53:6379'
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "changethis_s0m37h1ng53cr37**&SA*&%^&*%*^*("
