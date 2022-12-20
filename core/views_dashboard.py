@@ -94,10 +94,15 @@ def register_consultation():
 
         physician_ids = db.sinter(keyword_names)
         physician_ids = [p.decode('utf-8') for p in physician_ids]
+        
+        physician_id = None
+        for p in physician_ids:
+            key = CreatePhysicianKey(region_id, p) # check user doctor only 
+            if db.hgetall(key):
+                physician_id = p
+                break
 
-        if len(physician_ids) > 0:
-            physician_id = physician_ids[0]
-            
+        if physician_id:            
             physician_sch_key = CreatePhysicianScheduleKey(region_id, physician_id)
             physician_specialization = get_physician_spesialization(db, region_id, physician_id)
             physician_name = get_employee_name(db, region_id, physician_id)
@@ -236,8 +241,14 @@ def doctor_schedule():
         physician_ids = db.sinter(keyword_names)
         physician_ids = [p.decode('utf-8') for p in physician_ids]
 
-        if len(physician_ids) > 0:
-            physician_id = physician_ids[0]
+        physician_id = None
+        for p in physician_ids:
+            key = CreatePhysicianKey(region_id, p)
+            if db.hgetall(key):
+                physician_id = p
+                break
+
+        if physician_id:
             phy_sch_key = CreatePhysicianScheduleKey(region_id, physician_id)
 
     if phy_sch_key:
