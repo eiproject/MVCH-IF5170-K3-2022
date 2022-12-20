@@ -24,7 +24,7 @@ def register():
             name=user_id_key, 
             mapping={
                 'password': hashed_pw,
-                'user_type': 'doctor',
+                'user_type': 'patient',
             }
         )
             
