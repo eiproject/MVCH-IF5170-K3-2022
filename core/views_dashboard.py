@@ -14,21 +14,29 @@ def dashboard():
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
     
+    nurse_schedule = None
+    phy_sch_today = None
+    registered_schedule_render = None
+
     if user_type == UserType.PATIENT:
         template = 'dashboard/patient-home.html'
     elif user_type == UserType.PHYSICIAN:
         template = 'dashboard/doctor-home.html'
     elif user_type == UserType.NURSE:
         template = 'dashboard/nurse-home.html'
+        
+
+    if user_type == UserType.NURSE:    
+        # NURSE SCHEDULE
+        nurse_schedule = get_nurse_schedule(db, region_id, email)
+    else:
+        # CONSULTATION_SCHEDULE
+        phy_sch_today = get_all_schedule_by_date(db, region_id, datetime.now())
+
+        # REGISTERED_CONSULTATION_SCHEDULE
+        registered_schedule_render = get_upcoming_appointment_schedule(db, region_id, email, user_type)
     
-    # CONSULTATION_SCHEDULE
-    phy_sch_today = get_all_schedule_by_date(db, region_id, datetime.now())
-
-    # REGISTERED_CONSULTATION_SCHEDULE
-    registered_schedule_render = get_upcoming_appointment_schedule(db, region_id, email, user_type)
-
-    # NURSE SCHEDULE
-    nurse_schedule = get_nurse_schedule(db, region_id, email)
+    
 
     return render_template(template,
         Name="Dashboard",
