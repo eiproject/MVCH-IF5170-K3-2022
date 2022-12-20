@@ -41,6 +41,10 @@ def CreateEmployeeKey(region_id:str, user_id:str) -> str:
     # .. region_id:Employee[id:user_id] = name name dob dob address address phone phone gender gender hospital_id hospital_id 
     return f'{region_id}:Employee[id:{user_id}]'
 
+def CreateUserActivityKey(region_id:str, user_id:str) -> str:
+    # .. region_id:UserActivity[user_id:user_id] = [ timestamp:page ]
+    return f'{region_id}:UserActivity[id:{user_id}]'
+
 # dummy data generator 
 def generate_dummy_schedule(db, region_id):
     id = 0

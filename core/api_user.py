@@ -1,6 +1,7 @@
 from hashlib import sha256
 from http import HTTPStatus
 from flask import jsonify, request, session
+from core.context import create_activity
 
 from core.key import CreateUserKey
 from . import app, db, BASE_DIR, region, region_id
@@ -20,6 +21,7 @@ def register():
         message = "User already registered."
     else:        
         hashed_pw = sha256(password.encode('utf-8')).hexdigest()
+        create_activity(db, region_id, email, 'register')
         db.hset(
             name=user_id_key, 
             mapping={
@@ -57,6 +59,7 @@ def login():
             code = HTTPStatus.BAD_REQUEST
             message = "Wrong password."
         else:
+            create_activity(db, region_id, email, 'login')
             message = "Login OK"
             jwt_token = create_access_token(identity=user_id_key)
             # store in session

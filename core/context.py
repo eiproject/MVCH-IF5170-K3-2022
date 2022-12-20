@@ -262,5 +262,8 @@ def get_nurse_schedule(db:redis.Redis, region_id, nurse_id, is_future=True):
     return nurse_sch_data
 
 
-    
-    
+def create_activity(db:redis.Redis, region_id, user_id, activity):
+    key = CreateUserActivityKey(region_id, user_id)
+    timestamp = datetime.now().isoformat()
+    value = f'{timestamp}:{activity}'
+    db.sadd(key, value)

@@ -3,7 +3,7 @@ from . import app, db, region_id
 from core.entity import UserType
 from core.key import *
 from core.views_dashboard import check_jwt
-from core.context import get_patient_information, store_appointment
+from core.context import create_activity, get_patient_information, store_appointment
 
 from flask import jsonify, request, session
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -45,6 +45,9 @@ def register_patient():
         "data": 'OK',
         "message": message
     }
+
+    create_activity(db, region_id, email, 'register patient')
+    
     return jsonify(json_return), code
  
 
@@ -90,6 +93,9 @@ def create_appointment():
         "data": 'OK',
         "message": message
     }
+    
+    create_activity(db, region_id, email, 'create appointment')
+
     return jsonify(json_return), code
  
 
@@ -109,6 +115,8 @@ def patient_information():
         "data": patient_info,
         "message": message
     }
+
+    create_activity(db, region_id, email, f'see patient information {patient_id}')
     return jsonify(json_return), code
  
 

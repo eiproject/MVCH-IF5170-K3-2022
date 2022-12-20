@@ -1,5 +1,5 @@
 from . import app, db, region_id
-from core.context import get_all_schedule_by_date, get_employee_name, get_nurse_schedule, get_nurse_spesialization, get_upcoming_appointment_schedule, get_user_fullname, get_physician_spesialization
+from core.context import create_activity, get_all_schedule_by_date, get_employee_name, get_nurse_schedule, get_nurse_spesialization, get_upcoming_appointment_schedule, get_user_fullname, get_physician_spesialization
 from core.entity import UserType
 from core.key import * 
 from core.setting import *
@@ -13,6 +13,7 @@ def dashboard():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
+    create_activity(db, region_id, email, 'view dashboard')
     
     nurse_schedule = None
     phy_sch_today = None
@@ -53,6 +54,7 @@ def patient_registration():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
+    create_activity(db, region_id, email, 'view patient registration')
 
     patient_key = CreatePatientKey(region_id, email)
     if db.hgetall(patient_key):
@@ -72,6 +74,7 @@ def register_consultation():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
+    create_activity(db, region_id, email, 'view register consultation')
 
     print('register_consultation')
 
@@ -161,6 +164,7 @@ def history_consultation():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
+    create_activity(db, region_id, email, 'view history consultation')
     
     if user_type == UserType.PATIENT:
         appointment_key = CreatePatientAppointmentKey(region_id, email)
@@ -222,6 +226,7 @@ def doctor_schedule():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
+    create_activity(db, region_id, email, 'view doctor schedule')
     
     # search using input from field
     search_keyword = request.args.get('doctor')
@@ -309,6 +314,8 @@ def consultation_schedule():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
+    create_activity(db, region_id, email, 'view consultation schedule')
+
     registered_schedule_render = get_upcoming_appointment_schedule(db, region_id, email, user_type)
 
     return render_template(
@@ -326,6 +333,7 @@ def patient_list():
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
+    create_activity(db, region_id, email, 'view patient list')
     
     return render_template(
         'dashboard/doctor-patient-list.html', 
@@ -343,6 +351,8 @@ def nurse_schedule():
     nurse_name = get_user_fullname(db, region_id, email, user_type)
     nurse_specialization = get_nurse_spesialization(db, region_id, email)
     nurse_sch_key = CreateNurseScheduleKey(region_id, email)
+
+    create_activity(db, region_id, email, 'view nurse schedule')
 
     # generating timeslot
     now = datetime.now()
