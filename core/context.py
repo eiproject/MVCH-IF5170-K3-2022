@@ -122,8 +122,8 @@ def get_all_schedule_by_date(db:redis.Redis, region_id, datetime_obj:datetime):
             elif start_date.date() > datetime_obj.date():
                 break
 
-        if counter >= max:
-            break 
+        # if counter >= max:
+        #     break 
 
         counter+=1
 

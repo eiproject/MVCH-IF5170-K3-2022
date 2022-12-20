@@ -142,8 +142,7 @@ def register_consultation():
     elif selected_date:
         timeslots_render = get_all_schedule_by_date(db, region_id, selected_date)
     else:
-        # timeslots_render = get_all_schedule_by_date(db, region_id, datetime.now())
-        pass
+        timeslots_render = get_all_schedule_by_date(db, region_id, datetime.now())
 
     return render_template(
         'dashboard/patient-register-consultation.html', 
