@@ -1,4 +1,4 @@
 class UserType:
     PATIENT = 'patient'
-    PHYSICIAN = 'doctor'
+    PHYSICIAN = 'physician'
     NURSE = 'nurse'
