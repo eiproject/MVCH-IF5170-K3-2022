@@ -87,7 +87,11 @@ def get_all_schedule_by_date(db:redis.Redis, region_id, datetime_obj:datetime):
     today_phy_sched = []
 
     phy_ids = get_all_physician_id(db, region_id)
+
+    max = 10
+    counter = 0
     for phy_id in phy_ids:
+        print(counter)
         phy_name = get_employee_name(db, region_id, phy_id)
         phy_scpecialization = get_physician_spesialization(db, region_id, phy_id)
 
@@ -117,6 +121,11 @@ def get_all_schedule_by_date(db:redis.Redis, region_id, datetime_obj:datetime):
 
             elif start_date.date() > datetime_obj.date():
                 break
+
+        if counter >= max:
+            break 
+
+        counter+=1
 
     return today_phy_sched
 

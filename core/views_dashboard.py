@@ -73,6 +73,8 @@ def register_consultation():
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
 
+    print('register_consultation')
+
     timeslots = []
     timeslots_render = []
 
@@ -83,57 +85,64 @@ def register_consultation():
     search_keyword_doctor = request.args.get('doctor')
     search_keyword_date = request.args.get('date')
     
-    physicians = db.keys(f'*PhysicianSchedule*{search_keyword_doctor}*')
-    physician_sch_key = physicians[0].decode('utf-8') if physicians else None
-    
     selected_date = datetime.strptime(search_keyword_date, "%Y-%m-%d") if search_keyword_date else None
 
-    if physician_sch_key:
-        physician_id = GetUserIdFromKey(physician_sch_key) 
-        physician_specialization = get_physician_spesialization(db, region_id, physician_id)
-        physician_name = get_employee_name(db, region_id, physician_id)
+    if search_keyword_doctor:
+        search_keyword_doctor = search_keyword_doctor.lower() if search_keyword_doctor else None
+        keyword_names = search_keyword_doctor.split(' ')
 
-        schedule_ids = [int(v) for v in db.smembers(physician_sch_key)] if physician_sch_key else []
-        schedule_ids.sort()
+        physician_ids = db.sinter(keyword_names)
+        physician_ids = [p.decode('utf-8') for p in physician_ids]
 
-        now = datetime.now()
-        thresh = now + timedelta(days=7)
-
-        # create timeslots
-        for id in schedule_ids:
-            sch_key = CreateScheduleKey(region_id, id)
-            sch_data = db.hgetall(sch_key)
-            start = sch_data[b'start'].decode("utf-8")
-            end = sch_data[b'end'].decode("utf-8")
-
-            start_date = datetime.strptime(start, DATE_FORMAT)
+        if len(physician_ids) > 0:
+            physician_id = physician_ids[0]
             
-            is_add = False
-            if selected_date is not None:
-                if selected_date.date() == start_date.date():
-                    is_add = True
-            else:
-                if start_date.date() >= now.date() and  start_date.date() < thresh.date():
-                    is_add = True
+            physician_sch_key = CreatePhysicianScheduleKey(region_id, physician_id)
+            physician_specialization = get_physician_spesialization(db, region_id, physician_id)
+            physician_name = get_employee_name(db, region_id, physician_id)
 
-            if is_add:
-                day = start_date.strftime('%A')
-                time = start_date.strftime('%H:%M')
-                date = start_date.strftime('%Y-%m-%d')
+            schedule_ids = [int(v) for v in db.smembers(physician_sch_key)]
+            schedule_ids.sort()
+
+            now = datetime.now()
+            thresh = now + timedelta(days=7)
+
+            # create timeslots
+            for id in schedule_ids:
+                sch_key = CreateScheduleKey(region_id, id)
+                sch_data = db.hgetall(sch_key)
+                start = sch_data[b'start'].decode("utf-8")
+                # end = sch_data[b'end'].decode("utf-8")
+
+                start_date = datetime.strptime(start, DATE_FORMAT)
                 
-                is_available = start_date > datetime.now()
+                is_add = False
+                if selected_date is not None:
+                    if selected_date.date() == start_date.date():
+                        is_add = True
+                else:
+                    if start_date.date() >= now.date() and  start_date.date() < thresh.date():
+                        is_add = True
 
-                timeslots.append([day, time, date, f'{id}:{physician_id}', is_available])
+                if is_add:
+                    day = start_date.strftime('%A')
+                    time = start_date.strftime('%H:%M')
+                    date = start_date.strftime('%Y-%m-%d')
+                    
+                    is_available = start_date > datetime.now()
 
-        # rendering 
-        for timeslot in timeslots:
-            day, time, date, sch_phy, is_available = timeslot
-            timeslots_render.append([physician_name, physician_specialization, day, date, time, sch_phy, is_available])
+                    timeslots.append([day, time, date, f'{id}:{physician_id}', is_available])
+
+            # rendering 
+            for timeslot in timeslots:
+                day, time, date, sch_phy, is_available = timeslot
+                timeslots_render.append([physician_name, physician_specialization, day, date, time, sch_phy, is_available])
 
     elif selected_date:
         timeslots_render = get_all_schedule_by_date(db, region_id, selected_date)
     else:
-        timeslots_render = get_all_schedule_by_date(db, region_id, datetime.now())
+        # timeslots_render = get_all_schedule_by_date(db, region_id, datetime.now())
+        pass
 
     return render_template(
         'dashboard/patient-register-consultation.html', 
