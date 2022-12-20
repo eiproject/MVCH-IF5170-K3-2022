@@ -24,7 +24,7 @@
       </div>
       <div class="flex flex-col bg-white rounded-xl border border-green_dark p-2 flex-grow">
         <p class="font-bold">Nurse Schedule</p>
-        <div class="my-4 flex flex-col">
+        <div class="my-4 flex flex-col max-h-96 overflow-y-auto">
           {% for key, value in NURSE_SCHEDULE.items() %}
           <div class="flex my-2 py-1 border-t border-b border-green_dark">
             <div class="flex flex-col pl-4 w-2/12 text-sm">
