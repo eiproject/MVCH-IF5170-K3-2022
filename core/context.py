@@ -21,7 +21,7 @@ def get_nurse_spesialization(db:redis.Redis, region_id, nurse_id):
 def get_employee_name(db:redis.Redis, region_id, user_id):
     key = CreateEmployeeKey(region_id, user_id)
     name = db.hget(key, 'name')
-    name = name.decode('utf-8')
+    name = name.decode('utf-8') if name else user_id.split('@')[0]
     return name
 
 def get_user_fullname(db:redis.Redis, region_id, user_id, user_type):
