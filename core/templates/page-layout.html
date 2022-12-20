@@ -15,19 +15,20 @@
           </a>
         </div>
         <ul class="list-reset flex justify-between flex-1 md:flex-none items-end">
-          {% if EMAIL %}
-          <li class="mx-1">
-            <p class="py-4 px-6">
-              Welcome! <span class="italic">{{EMAIL}}</span>
-            </p>
-          </li>
-          {% endif %}
           <li class="mx-1">
             <button class="bg-white hover:bg-gray-100 py-4 px-6 rounded-full duration-500" type="button"
               onclick="window.location.href = '/'">
               Home
             </button>
           </li>
+          {% if EMAIL %}
+          <li class="mx-1">
+            <button class="bg-white hover:bg-gray-100 py-4 px-6 rounded-full duration-500" type="button"
+              onclick="window.location.href = '/dashboard'">
+              Dashboard
+            </button>
+          </li>
+          {% endif %}
           <li class="">
             {% if EMAIL %}
             <button class="bg-white hover:bg-gray-100 py-4 px-6 rounded-full duration-500 text-red-500" type="button"
