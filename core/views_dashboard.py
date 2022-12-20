@@ -76,8 +76,6 @@ def register_consultation():
     user_fullname = get_user_fullname(db, region_id, email, user_type)
     create_activity(db, region_id, email, 'view register consultation')
 
-    print('register_consultation')
-
     timeslots = []
     timeslots_render = []
 
