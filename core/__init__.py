@@ -23,7 +23,7 @@ logging.basicConfig(filename='mvch.log', level=logging.DEBUG,
 
 # Redis
 app.config['SECRET_KEY'] = 'changethis_BDy9asydnasdna98n^B&D*tsa87dvbats67asrv67r'
-app.config['REDIS_URL'] = 'redis://localhost:6379'
+app.config['REDIS_URL'] = 'redis://34.101.126.53:6379'
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "changethis_s0m37h1ng53cr37**&SA*&%^&*%*^*("
@@ -39,7 +39,7 @@ db.init_app(app)
 bcrypt = Bcrypt(app)
 
 region = 'indo'
-region_id = 'ID'
+region_id = 'indo'
 
 from core import \
     views, views_dashboard, \
