@@ -3,3 +3,5 @@ node_modules
 
 *.log
 *.env
+
+dummy_data_importer
