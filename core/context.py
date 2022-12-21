@@ -228,11 +228,10 @@ def get_nurse_schedule(db:redis.Redis, region_id, nurse_id, is_future=True):
             phy_sch_ids = db.smembers(phy_sch_key)
             phy_sch_ids = sorted([int(i) for i in phy_sch_ids])
             phy_sch_data[phy_id] = phy_sch_ids
-    
+
     nurse_sch_data = {}
 
     for nurse_sch_id in nurse_sch_ids:
-        print(nurse_sch_id)
         sch_key = CreateScheduleKey(region_id, nurse_sch_id)
         start = db.hget(sch_key, 'start').decode('utf-8')
         start_date = datetime.strptime(start, DATE_FORMAT)
@@ -247,7 +246,7 @@ def get_nurse_schedule(db:redis.Redis, region_id, nurse_id, is_future=True):
             time = start_date.strftime('%H:%M')
             date = start_date.strftime('%Y-%m-%d')
 
-            physician = ['dr. AABC']
+            physician = []
             for k in phy_sch_data:
                 if nurse_sch_id in  phy_sch_data[k]:
                     physician_name = get_employee_name(db, region_id, k)
