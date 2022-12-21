@@ -57,10 +57,12 @@
   {% block body %}{% endblock %}
 </body>
 
-<footer class="flex justify-center items-center mt-20 mb-4">
-  {% block footer %}
-  <span>&copy; Copyright 2022 | Mountain View Community Hospital | Kelompok 3</span>
-  {% endblock %}
+
+{% block footer %}
+<footer class="flex justify-center items-center py-4">
+  <p>&copy; Copyright 2022 | Mountain View Community Hospital | Kelompok 3</p>
 </footer>
+{% endblock %}
+
 
 {% block script %}{% endblock %}
