@@ -1,9 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import redis
 from core.entity import UserType
 
 from core.key import *
 from core.setting import *
+from core.util import get_now_datetime
 
 
 def get_physician_spesialization(db:redis.Redis, region_id, physician_id):
@@ -131,7 +132,7 @@ def get_all_schedule_by_date(db:redis.Redis, region_id, datetime_obj:datetime):
 
 
 def get_upcoming_appointment_schedule(db:redis.Redis, region_id, user_id, user_type):
-    now = datetime.now()
+    now = get_now_datetime(region_id)
     appointment_key = None
 
     if user_type == UserType.PATIENT:

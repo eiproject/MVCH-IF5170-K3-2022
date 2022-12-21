@@ -3,7 +3,7 @@ from core.context import create_activity, get_all_schedule_by_date, get_employee
 from core.entity import UserType
 from core.key import * 
 from core.setting import *
-from core.util import check_jwt
+from core.util import check_jwt, get_now_datetime
 from datetime import datetime, timedelta
 from flask import request, render_template, redirect, session
 
@@ -76,7 +76,7 @@ def register_consultation():
     user_fullname = get_user_fullname(db, region_id, email, user_type)
     create_activity(db, region_id, email, 'view register consultation')
     
-    now = datetime.utcnow() + timedelta(hours=7)
+    now = get_now_datetime(region_id)
     timeslots = []
     timeslots_render = []
 
@@ -269,7 +269,7 @@ def doctor_schedule():
         physician_name = ''
 
     # generating timeslot
-    now = datetime.now()
+    now = get_now_datetime(region_id)
     thresh = now + timedelta(days=7)
     schedule_ids = [int(v) for v in db.smembers(physician_key)]
     schedule_ids.sort()
@@ -373,7 +373,7 @@ def nurse_schedule():
     create_activity(db, region_id, email, 'view nurse schedule')
 
     # generating timeslot
-    now = datetime.now()
+    now = get_now_datetime(region_id)
     thresh = now + timedelta(days=7)
     schedule_ids = [int(v) for v in db.smembers(nurse_sch_key)]
     schedule_ids.sort()

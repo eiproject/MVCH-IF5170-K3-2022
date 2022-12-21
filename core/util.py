@@ -1,4 +1,6 @@
+from datetime import datetime, timedelta
 from typing import Tuple
+from core.entity import Region
 from core.key import GetUserIdFromKey
 from flask import session
 from flask_jwt_extended import decode_token
@@ -18,3 +20,10 @@ def check_jwt(db, sess) -> Tuple[str, str]:
             return GetUserIdFromKey(user_id_key), user_type.decode("utf-8") 
     
     return None, None
+
+def get_now_datetime(region_id):
+    if region_id == Region.INDO:
+        return datetime.utcnow() + timedelta(hours=7)
+    else:
+        return datetime.utcnow() - timedelta(hours=5)
+    
