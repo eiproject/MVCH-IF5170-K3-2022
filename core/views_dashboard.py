@@ -76,7 +76,7 @@ def register_consultation():
     user_fullname = get_user_fullname(db, region_id, email, user_type)
     create_activity(db, region_id, email, 'view register consultation')
     
-    now = datetime.now()
+    now = datetime.utcnow() + timedelta(hours=7)
     timeslots = []
     timeslots_render = []
 
@@ -137,7 +137,7 @@ def register_consultation():
                     
                     is_available = start_date > now
 
-                    timeslots.append([day, f'{time} | {datetime.utcnow()}', date, f'{id}:{physician_id}', is_available])
+                    timeslots.append([day, time, date, f'{id}:{physician_id}', is_available])
 
             # rendering 
             for timeslot in timeslots:
