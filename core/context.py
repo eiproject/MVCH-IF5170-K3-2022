@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import logging
 import redis
 from core.entity import UserType
 
@@ -229,6 +230,9 @@ def get_nurse_schedule(db:redis.Redis, region_id, nurse_id, is_future=True):
             phy_sch_ids = sorted([int(i) for i in phy_sch_ids])
             phy_sch_data[phy_id] = phy_sch_ids
 
+    logging.debug(msg=str(phy_sch_data))
+    logging.debug(msg=str(nurse_sch_ids))
+    
     nurse_sch_data = {}
 
     for nurse_sch_id in nurse_sch_ids:
