@@ -149,15 +149,9 @@ def get_upcoming_appointment_schedule(db:redis.Redis, region_id, user_id, user_t
         app_key = CreateAppointmentKey(region_id, id)
         app_data = db.hgetall(app_key)
         
-        physician_id = app_data[b'physician_id'].decode('utf-8')
-        physician_specialization = get_physician_spesialization(db, region_id, physician_id)
-        physician_name = get_employee_name(db, region_id, physician_id)
-
-        patient_id = app_data[b'patient_id'].decode('utf-8')
-        patient_name = get_user_fullname(db, region_id, patient_id, UserType.PATIENT)
+        if not app_data: raise Exception('Appointment is not exists')
 
         schedule_id = app_data[b'schedule_id'].decode('utf-8')
-
         sch_key = CreateScheduleKey(region_id, schedule_id)
         sch_data = db.hgetall(sch_key)
         start = sch_data[b'start'].decode('utf-8')
@@ -165,6 +159,13 @@ def get_upcoming_appointment_schedule(db:redis.Redis, region_id, user_id, user_t
         start_date = datetime.strptime(start, DATE_FORMAT)
 
         if start_date > now:
+            physician_id = app_data[b'physician_id'].decode('utf-8')
+            physician_specialization = get_physician_spesialization(db, region_id, physician_id)
+            physician_name = get_employee_name(db, region_id, physician_id)
+
+            patient_id = app_data[b'patient_id'].decode('utf-8')
+            patient_name = get_user_fullname(db, region_id, patient_id, UserType.PATIENT)
+
             day = start_date.strftime('%A')
             time = start_date.strftime('%H:%M')
             date = start_date.strftime('%Y-%m-%d')
