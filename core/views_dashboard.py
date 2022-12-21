@@ -32,7 +32,7 @@ def dashboard():
         nurse_schedule = get_nurse_schedule(db, region_id, email)
     else:
         # CONSULTATION_SCHEDULE
-        phy_sch_today = get_all_schedule_by_date(db, region_id, datetime.now())
+        phy_sch_today = get_all_schedule_by_date(db, region_id, get_now_datetime(region_id))
 
         # REGISTERED_CONSULTATION_SCHEDULE
         registered_schedule_render = get_upcoming_appointment_schedule(db, region_id, email, user_type)
@@ -147,7 +147,7 @@ def register_consultation():
     elif selected_date:
         timeslots_render = get_all_schedule_by_date(db, region_id, selected_date)
     else:
-        timeslots_render = get_all_schedule_by_date(db, region_id, datetime.now())
+        timeslots_render = get_all_schedule_by_date(db, region_id, get_now_datetime(region_id))
 
     timeslots_render.sort(key=lambda x: (x[3], x[4]))
     return render_template(
@@ -194,7 +194,7 @@ def history_consultation():
             end = sch_data[b'end'].decode('utf-8')
             end_datetime = datetime.strptime(end, DATE_FORMAT)
 
-            if end_datetime < datetime.now():
+            if end_datetime < get_now_datetime(region_id):
                 physician_id = app_data[b'physician_id'].decode('utf-8')
                 physician_specialization = get_physician_spesialization(db, region_id, physician_id)
                 physician_name = get_employee_name(db, region_id, physician_id)
