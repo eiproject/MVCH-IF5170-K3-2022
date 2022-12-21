@@ -136,8 +136,9 @@ def register_consultation():
                     date = start_date.strftime('%Y-%m-%d')
                     
                     is_available = start_date > datetime.now()
+                    print(start_date, datetime.now())
 
-                    timeslots.append([day, time, date, f'{id}:{physician_id}', is_available])
+                    timeslots.append([day, f'{time} | {datetime.now()}', date, f'{id}:{physician_id}', is_available])
 
             # rendering 
             for timeslot in timeslots:
