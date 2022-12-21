@@ -149,6 +149,7 @@ def register_consultation():
     else:
         timeslots_render = get_all_schedule_by_date(db, region_id, datetime.now())
 
+    timeslots_render.sort(key=lambda x: (x[3], x[4]))
     return render_template(
         'dashboard/patient-register-consultation.html', 
         Name="Register Consultation", 
