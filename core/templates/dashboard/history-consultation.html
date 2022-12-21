@@ -2,7 +2,11 @@
 
 {% block content %}
 <div class="p-10 flex flex-col flex-grow">
+  {% if USER_TYPE == 'nurse' %}
+  <p class="font-bold text-2xl">Work History</p>
+  {% else %}
   <p class="font-bold text-2xl">History Consultation</p>
+  {%%}
   <div class="bg-white rounded-xl border border-green_dark py-10 px-20 mt-4 flex-grow">
     <div class="my-4 flex flex-col max-h-96 overflow-y-auto">
       {% if USER_TYPE == 'patient' %}
