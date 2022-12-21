@@ -26,7 +26,7 @@ app.config['SECRET_KEY'] = 'changethis_BDy9asydnasdna98n^B&D*tsa87dvbats67asrv67
 if 'rizquuula/Playground/' in BASE_DIR:
     app.config['REDIS_URL'] = 'redis://34.101.126.53:6379'
 else:
-    app.config['REDIS_URL'] = 'redis://34.101.126.53:6379'
+    app.config['REDIS_URL'] = 'redis://34.101.111.202:6379'
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "changethis_s0m37h1ng53cr37**&SA*&%^&*%*^*("
