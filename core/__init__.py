@@ -23,10 +23,10 @@ logging.basicConfig(filename='mvch.log', level=logging.DEBUG,
 
 # Redis
 app.config['SECRET_KEY'] = 'changethis_BDy9asydnasdna98n^B&D*tsa87dvbats67asrv67r'
-if 'rizquuula/Playground/' in BASE_DIR:
-    app.config['REDIS_URL'] = 'redis://34.101.111.202:6379'
-else:
-    app.config['REDIS_URL'] = 'redis://34.101.111.202:6379'
+# if 'rizquuula/Playground/' in BASE_DIR:
+#     app.config['REDIS_URL'] = 'redis://34.101.111.202:6379'
+# else:
+#     app.config['REDIS_URL'] = 'redis://34.101.111.202:6379'
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "changethis_s0m37h1ng53cr37**&SA*&%^&*%*^*("
@@ -36,13 +36,35 @@ app.config["JWT_ERROR_MESSAGE_KEY"] = "Error"
 # Public class
 jwt = JWTManager(app)
 
-db:redis.Redis = FlaskRedis(app)
-db.init_app(app)
-
 bcrypt = Bcrypt(app)
 
 region = 'indo'
 region_id = 'indo'
+
+
+def get_db() -> redis.Redis:
+    leader = 'redis://34.101.111.202:6379'
+    follower = 'redis://34.135.238.181:6379'
+    
+    redis_dbs = [leader, follower]
+    
+    is_ok = True
+    counter = 0
+    while is_ok:
+        try:
+            db_url = redis_dbs[counter%2]
+            print('get_db', db_url)
+            db = redis.Redis.from_url(db_url, retry_on_timeout=False, socket_timeout=10)
+            ping = db.ping()
+            print('ping status:', ping)
+            if ping:
+                is_ok = False
+        except Exception as e:
+            # when timeout
+            logging.debug(f'{e} |  {type(e)}')
+        
+        counter+=1
+    return db
 
 from core import \
     views, views_dashboard, \

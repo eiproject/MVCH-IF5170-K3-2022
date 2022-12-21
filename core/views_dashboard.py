@@ -1,4 +1,4 @@
-from . import app, db, region_id
+from . import app, get_db, region_id
 from core.context import create_activity, get_all_schedule_by_date, get_employee_name, get_nurse_schedule, get_nurse_spesialization, get_upcoming_appointment_schedule, get_user_fullname, get_physician_spesialization
 from core.entity import UserType
 from core.key import * 
@@ -10,10 +10,13 @@ from flask import request, render_template, redirect, session
 
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
-    email, user_type = check_jwt(db, session)
+    db = get_db()
+    email, user_type = check_jwt(get_db(), session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
     create_activity(db, region_id, email, 'view dashboard')
+
+    print(email)
     
     nurse_schedule = None
     phy_sch_today = None
@@ -51,6 +54,7 @@ def dashboard():
 
 @app.route("/dashboard/patient-registration", methods=["GET"])
 def patient_registration():
+    db = get_db()
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
@@ -71,6 +75,7 @@ def patient_registration():
 
 @app.route("/dashboard/register-consultation", methods=["GET"])
 def register_consultation():
+    db = get_db()
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
@@ -164,6 +169,7 @@ def register_consultation():
     
 @app.route("/dashboard/history-consultation", methods=["GET"])
 def history_consultation():
+    db = get_db()
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
@@ -226,6 +232,7 @@ def history_consultation():
 
 @app.route("/dashboard/doctor-schedule", methods=["GET"])
 def doctor_schedule():
+    db = get_db()
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
@@ -329,6 +336,7 @@ def doctor_schedule():
 
 @app.route("/dashboard/consultation-schedule", methods=["GET"])
 def consultation_schedule():
+    db = get_db()
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
@@ -348,6 +356,7 @@ def consultation_schedule():
     
 @app.route("/dashboard/patient-list", methods=["GET"])
 def patient_list():
+    db = get_db()
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
@@ -363,6 +372,7 @@ def patient_list():
 
 @app.route("/dashboard/nurse-schedule", methods=["GET"])
 def nurse_schedule():
+    db = get_db()
     email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     

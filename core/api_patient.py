@@ -1,4 +1,4 @@
-from . import app, db, region_id
+from . import app, get_db, region_id
 
 from core.entity import UserType
 from core.key import *
@@ -12,6 +12,7 @@ from http import HTTPStatus
 
 @app.route("/api/patient-register", methods=["POST"])
 def register_patient():
+    db = get_db()
     code = HTTPStatus.OK
     message = "OK"
     email, user_type = check_jwt(db, session)
@@ -53,6 +54,7 @@ def register_patient():
 
 @app.route("/api/create-appointment", methods=["POST"])
 def create_appointment():
+    db = get_db()
     code = HTTPStatus.OK
     message = "OK"
     email, user_type = check_jwt(db, session)
@@ -101,6 +103,7 @@ def create_appointment():
 
 @app.route("/api/patient-information", methods=["POST"])
 def patient_information():
+    db = get_db()
     code = HTTPStatus.OK
     message = "OK"
     email, user_type = check_jwt(db, session)

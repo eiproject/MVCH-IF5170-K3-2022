@@ -1,11 +1,11 @@
-from datetime import datetime, timedelta
-import logging
-import redis
 from core.entity import UserType
-
 from core.key import *
 from core.setting import *
 from core.util import get_now_datetime
+from datetime import datetime, timedelta
+from tqdm import tqdm
+
+import redis
 
 
 def get_physician_spesialization(db:redis.Redis, region_id, physician_id):
@@ -221,7 +221,8 @@ def get_nurse_schedule(db:redis.Redis, region_id, nurse_id, is_future=True):
     phy_sch_data = {}
 
     phy_sch_keys = db.keys('*PhysicianSchedule*')
-    for phy_sch_key in phy_sch_keys:
+    
+    for phy_sch_key in tqdm(phy_sch_keys):
         phy_id = GetUserIdFromKey(phy_sch_key.decode('utf-8'))
         phy_specialization = get_physician_spesialization(db, region_id, phy_id)
         if nurse_specialization == phy_specialization:
@@ -231,7 +232,7 @@ def get_nurse_schedule(db:redis.Redis, region_id, nurse_id, is_future=True):
 
     nurse_sch_data = {}
 
-    for nurse_sch_id in nurse_sch_ids:
+    for nurse_sch_id in tqdm(nurse_sch_ids):
         sch_key = CreateScheduleKey(region_id, nurse_sch_id)
         start = db.hget(sch_key, 'start').decode('utf-8')
         start_date = datetime.strptime(start, DATE_FORMAT)
