@@ -224,7 +224,7 @@ def get_nurse_schedule(db:redis.Redis, region_id, nurse_id, is_future=True):
     for phy_sch_key in phy_sch_keys:
         phy_id = GetUserIdFromKey(phy_sch_key.decode('utf-8'))
         phy_specialization = get_physician_spesialization(db, region_id, phy_id)
-        
+        logging.debug(msg=f'{nurse_specialization}, {phy_specialization}')
         if nurse_specialization == phy_specialization:
             phy_sch_ids = db.smembers(phy_sch_key)
             phy_sch_ids = sorted([int(i) for i in phy_sch_ids])
@@ -232,7 +232,7 @@ def get_nurse_schedule(db:redis.Redis, region_id, nurse_id, is_future=True):
 
     logging.debug(msg=str(phy_sch_data))
     logging.debug(msg=str(nurse_sch_ids))
-    
+
     nurse_sch_data = {}
 
     for nurse_sch_id in nurse_sch_ids:
