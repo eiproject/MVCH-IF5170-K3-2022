@@ -75,7 +75,8 @@ def register_consultation():
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
     create_activity(db, region_id, email, 'view register consultation')
-
+    
+    now = datetime.now()
     timeslots = []
     timeslots_render = []
 
@@ -110,7 +111,6 @@ def register_consultation():
             schedule_ids = [int(v) for v in db.smembers(physician_sch_key)]
             schedule_ids.sort()
 
-            now = datetime.now()
             thresh = now + timedelta(days=7)
 
             # create timeslots
@@ -135,10 +135,9 @@ def register_consultation():
                     time = start_date.strftime('%H:%M')
                     date = start_date.strftime('%Y-%m-%d')
                     
-                    is_available = start_date > datetime.now()
-                    print(start_date, datetime.now())
+                    is_available = start_date > now
 
-                    timeslots.append([day, f'{time} | {datetime.now()}', date, f'{id}:{physician_id}', is_available])
+                    timeslots.append([day, f'{time} | {now}', date, f'{id}:{physician_id}', is_available])
 
             # rendering 
             for timeslot in timeslots:
