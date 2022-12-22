@@ -1,6 +1,5 @@
 import time
 import redis
-from core.setting import DB_SETTING
 
 
 def write_config_default():
@@ -9,7 +8,7 @@ def write_config_default():
         file.writelines(config)
 
 
-def get_db() -> redis.Redis:
+def auto_switching_db() -> redis.Redis:
     is_ok = True    
     while is_ok:
         try:
@@ -29,3 +28,6 @@ def get_db() -> redis.Redis:
         except Exception as e:
             print('Error')
             time.sleep(10)
+
+if __name__ == '__main__':
+    auto_switching_db()
