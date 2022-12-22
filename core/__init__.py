@@ -4,7 +4,6 @@ import redis
 
 from datetime import timedelta
 from flask import Flask
-from flask_redis import FlaskRedis
 from flask_bcrypt import Bcrypt
 
 from flask_jwt_extended import JWTManager
@@ -22,14 +21,14 @@ logging.basicConfig(filename='mvch.log', level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 # Redis
-app.config['SECRET_KEY'] = 'changethis_BDy9asydnasdna98n^B&D*tsa87dvbats67asrv67r'
+app.config['SECRET_KEY'] = 'BDy9asydnasdna98n^B&D*tsa87dvbats67asrv67r'
 # if 'rizquuula/Playground/' in BASE_DIR:
 #     app.config['REDIS_URL'] = 'redis://34.101.111.202:6379'
 # else:
 #     app.config['REDIS_URL'] = 'redis://34.101.111.202:6379'
 
 # Setup the Flask-JWT-Extended extension
-app.config["JWT_SECRET_KEY"] = "changethis_s0m37h1ng53cr37**&SA*&%^&*%*^*("
+app.config["JWT_SECRET_KEY"] = "s0m37h1ng53cr37**&SA*&%^&*%*^*("
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=1440)
 app.config["JWT_ERROR_MESSAGE_KEY"] = "Error"
 
