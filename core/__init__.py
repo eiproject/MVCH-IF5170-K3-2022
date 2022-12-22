@@ -9,7 +9,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 
 from core.setting import *
-
+from core.db_switcher import get_db
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 print('BASE_DIR', BASE_DIR)
@@ -36,33 +36,6 @@ jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
 
 region_id = DB_SETTING['region_id']
-redis_dbs = [DB_SETTING['leader'], DB_SETTING['follower']]
-
-def get_db() -> redis.Redis:
-    db = None
-    is_ok = True
-    db_url = None
-    
-    # counter = 0
-    while is_ok:
-        try:
-            db_url = redis_dbs[0]
-            db = redis.Redis.from_url(db_url, retry_on_timeout=False, socket_timeout=10)
-            ping = db.ping()
-            if ping: 
-                is_ok = False
-            else:
-                lead, foll = redis_dbs[0], redis_dbs[0]
-                redis_dbs = [foll, lead]
-
-        except Exception as e:
-            # when timeout
-            logging.debug(f'Error: {db_url} {e} |  {type(e)}')
-            lead, foll = redis_dbs[0], redis_dbs[0]
-            redis_dbs = [foll, lead]
-        
-        # counter+=1
-    return db
 
 logging.debug(f'Starting app..')
 
