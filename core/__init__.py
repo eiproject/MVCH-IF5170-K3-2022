@@ -43,6 +43,7 @@ region_id = 'indo'
 
 
 def get_db() -> redis.Redis:
+    db = None
     leader = 'redis://34.101.111.202:6379'
     follower = 'redis://34.135.238.181:6379'
     
@@ -53,15 +54,17 @@ def get_db() -> redis.Redis:
     while is_ok:
         try:
             db_url = redis_dbs[counter%2]
-            print('get_db', db_url)
+            logging.debug(f'Trying to connect {db_url}')
+            
             db = redis.Redis.from_url(db_url, retry_on_timeout=False, socket_timeout=10)
             ping = db.ping()
-            print('ping status:', ping)
+            
             if ping:
+                logging.debug(f'Connected {db_url}')
                 is_ok = False
         except Exception as e:
             # when timeout
-            logging.debug(f'{e} |  {type(e)}')
+            logging.debug(f'Error: {e} |  {type(e)}')
         
         counter+=1
     return db
