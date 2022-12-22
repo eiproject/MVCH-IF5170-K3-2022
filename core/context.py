@@ -261,7 +261,6 @@ def get_nurse_schedule(db:redis.Redis, region_id, nurse_id, is_future=True):
                 'physician': physician,
             }
 
-    print(nurse_sch_data)
     return nurse_sch_data
 
 

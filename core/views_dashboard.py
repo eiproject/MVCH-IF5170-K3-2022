@@ -15,8 +15,6 @@ def dashboard():
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
     create_activity(db, region_id, email, 'view dashboard')
-
-    print(email)
     
     nurse_schedule = None
     phy_sch_today = None
