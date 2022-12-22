@@ -36,26 +36,32 @@ jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
 
 region_id = DB_SETTING['region_id']
+redis_dbs = [DB_SETTING['leader'], DB_SETTING['follower']]
 
 def get_db() -> redis.Redis:
     db = None
-    
-    redis_dbs = [DB_SETTING['leader'], DB_SETTING['follower']]
-    
     is_ok = True
-    counter = 0
+    db_url = None
+    
+    # counter = 0
     while is_ok:
         try:
-            db_url = redis_dbs[counter%2]
+            db_url = redis_dbs[0]
             db = redis.Redis.from_url(db_url, retry_on_timeout=False, socket_timeout=10)
             ping = db.ping()
-            if ping: is_ok = False
+            if ping: 
+                is_ok = False
+            else:
+                lead, foll = redis_dbs[0], redis_dbs[0]
+                redis_dbs = [foll, lead]
 
         except Exception as e:
             # when timeout
-            logging.debug(f'Error: {e} |  {type(e)}')
+            logging.debug(f'Error: {db_url} {e} |  {type(e)}')
+            lead, foll = redis_dbs[0], redis_dbs[0]
+            redis_dbs = [foll, lead]
         
-        counter+=1
+        # counter+=1
     return db
 
 logging.debug(f'Starting app..')
