@@ -34,3 +34,13 @@ def request_entity_too_large(error):
             {'error': 'File too large'}
         ]
     }), 413
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({
+        'code': 413,
+        'status': 'ERROR',
+        'data': [
+            {'error': 'Custom error'}
+        ]
+    }), 413
