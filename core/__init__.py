@@ -68,6 +68,8 @@ def get_db() -> redis.Redis:
         counter+=1
     return db
 
+logging.debug(f'Starting app..')
+
 from core import \
     views, views_dashboard, \
     api_user, api_patient, \

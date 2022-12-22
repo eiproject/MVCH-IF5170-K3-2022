@@ -11,7 +11,7 @@ from flask import request, render_template, redirect, session
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
     db = get_db()
-    email, user_type = check_jwt(get_db(), session)
+    email, user_type = check_jwt(db, session)
     if email is None: return redirect('/logout')
     user_fullname = get_user_fullname(db, region_id, email, user_type)
     create_activity(db, region_id, email, 'view dashboard')
@@ -332,6 +332,7 @@ def doctor_schedule():
         SEARCH_KEYWORD=search_keyword
         )
 
+
 @app.route("/dashboard/consultation-schedule", methods=["GET"])
 def consultation_schedule():
     db = get_db()
@@ -367,6 +368,7 @@ def patient_list():
         USER_TYPE=user_type, 
         USER_FULLNAME=user_fullname,
         )
+
 
 @app.route("/dashboard/nurse-schedule", methods=["GET"])
 def nurse_schedule():
