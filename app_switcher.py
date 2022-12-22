@@ -20,13 +20,15 @@ def auto_switching_db() -> redis.Redis:
                 )
             ping = db.ping()
             if ping: 
+                print('ok')
                 write_config_default()
                 time.sleep(60)
             else:
+                print('not ok')
                 time.sleep(10)
 
         except Exception as e:
-            print('Error')
+            print(f'Error, {e}')
             time.sleep(10)
 
 if __name__ == '__main__':
