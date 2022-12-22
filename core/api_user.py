@@ -4,13 +4,13 @@ from flask import jsonify, request, session
 from core.context import create_activity
 
 from core.key import CreateUserKey
-from . import app, get_db, region_id, dbs
+from . import app, get_db, region_id
 from flask_jwt_extended import create_access_token
 
 
 @app.route("/api/user-register", methods=["POST"])
 def register():
-    db = get_db(dbs)
+    db = get_db()
     code = HTTPStatus.OK
     message = "OK"
     
@@ -44,7 +44,7 @@ def register():
 
 @app.route("/api/user-login", methods=["POST"])
 def login():
-    db = get_db(dbs)
+    db = get_db()
     code = HTTPStatus.OK
     message = "OK"
     jwt_token = None
