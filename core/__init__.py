@@ -1,11 +1,9 @@
 import logging
 import os
-import redis
 
 from datetime import timedelta
 from flask import Flask
 from flask_bcrypt import Bcrypt
-
 from flask_jwt_extended import JWTManager
 
 from core.setting import *
@@ -35,9 +33,9 @@ jwt = JWTManager(app)
 
 bcrypt = Bcrypt(app)
 
-region_id = DB_SETTING['region_id']
+region_id = 'indo'
 
-logging.debug(f'Starting app..')
+logging.debug(f'Starting app.. {region_id}')
 
 from core import \
     views, views_dashboard, \

@@ -3,7 +3,7 @@ import redis
 
 
 def write_config_default():
-    config = ['redis://34.101.126.53:6379\n', 'redis://35.238.56.161:6379\n']
+    config = ['redis://34.136.139.107:6379\n', 'redis://34.136.139.107:6379\n']
     with open('db_config', 'w') as file:
         file.writelines(config)
 
@@ -12,7 +12,7 @@ def auto_switching_db() -> redis.Redis:
     is_ok = True    
     while is_ok:
         try:
-            db_url = 'redis://34.101.126.53:6379'
+            db_url = 'redis://34.136.139.107:6379'
             db = redis.Redis.from_url(
                 db_url, 
                 retry_on_timeout=False, 
