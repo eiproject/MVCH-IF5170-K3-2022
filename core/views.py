@@ -1,20 +1,25 @@
+from . import app, get_db
 from core.util import get_session_key
-from . import app, jwt, get_db
-from flask import Flask, request, render_template, redirect, jsonify, session
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, decode_token
+from flask import render_template, redirect, session
+
+import logging
 
 
 @app.route('/')
 def landing_page():
+    logging.debug(f'Landing page')
     db = get_db()
     email = None
+    logging.debug(f'Landing page 2')
     if 'jwt' in session:
+        logging.debug(f'Landing page 3')
         email = get_session_key()
         if db.hgetall(email):
             pass
         else:
             redirect('/logout')
-
+    
+    logging.debug(f'Landing page end')
     return render_template('home.html', Name="Home", EMAIL=email)
 
 
