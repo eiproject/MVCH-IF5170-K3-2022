@@ -22,10 +22,6 @@ logging.basicConfig(filename='mvch.log', level=logging.DEBUG,
 
 # Redis
 app.config['SECRET_KEY'] = 'BDy9asydnasdna98n^B&D*tsa87dvbats67asrv67r'
-# if 'rizquuula/Playground/' in BASE_DIR:
-#     app.config['REDIS_URL'] = 'redis://34.101.111.202:6379'
-# else:
-#     app.config['REDIS_URL'] = 'redis://34.101.111.202:6379'
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "s0m37h1ng53cr37**&SA*&%^&*%*^*("
@@ -37,9 +33,7 @@ jwt = JWTManager(app)
 
 bcrypt = Bcrypt(app)
 
-region = 'indo'
 region_id = 'indo'
-
 
 def get_db() -> redis.Redis:
     db = None
@@ -53,14 +47,10 @@ def get_db() -> redis.Redis:
     while is_ok:
         try:
             db_url = redis_dbs[counter%2]
-            logging.debug(f'Trying to connect {db_url}')
-            
             db = redis.Redis.from_url(db_url, retry_on_timeout=False, socket_timeout=10)
             ping = db.ping()
-            
-            if ping:
-                logging.debug(f'Connected {db_url}')
-                is_ok = False
+            if ping: is_ok = False
+
         except Exception as e:
             # when timeout
             logging.debug(f'Error: {e} |  {type(e)}')
