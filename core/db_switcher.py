@@ -22,7 +22,7 @@ def get_db(dbs: List[str]) -> redis.Redis:
 
         except Exception as e:
             # when timeout
-            logging.debug(f'Error: {db_url} {e} |  {type(e)}')
+            logging.debug(f'Error: {db_url} {dbs} {e}')
             lead, foll = dbs[0], dbs[1]
             dbs = [foll, lead]
         
