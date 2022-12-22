@@ -6,4 +6,4 @@ DB_SETTING = {
     'follower': 'redis://35.238.56.161:6379',
 }
 
-REDIS_DBS = [DB_SETTING['leader'], DB_SETTING['follower']]
+# REDIS_DBS = [DB_SETTING['leader'], DB_SETTING['follower']]

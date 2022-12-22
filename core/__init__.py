@@ -36,6 +36,7 @@ jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
 
 region_id = DB_SETTING['region_id']
+dbs = [DB_SETTING['leader'], DB_SETTING['follower']]
 
 logging.debug(f'Starting app..')
 
