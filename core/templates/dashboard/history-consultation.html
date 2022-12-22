@@ -31,26 +31,19 @@
       {% elif USER_TYPE == 'physician' %}
       <table>
         <tr class="border-b border-t border-green_dark">
-          <th class="py-2">No</th>
-          <th>Date</th>
+          <th class="py-2">Patient</th>
           <th>Day</th>
+          <th>Date</th>
           <th>Time</th>
-          <th>Detail</th>
         </tr>
-        <tr>
-          <td class="text-center">1</td>
-          <td class="text-center">Date A</td>
-          <td class="text-center">Day A</td>
-          <td class="text-center">Time A</td>
-          <td>Detail A</td>
+        {% for row in COSULTATION_HISTORY %}
+        <tr class="text-center">
+          <td>{{ row[0] }}</td>
+          <td>{{ row[2] }}</td>
+          <td>{{ row[3] }}</td>
+          <td>{{ row[4] }}</td>
         </tr>
-        <tr>
-          <td class="text-center">2</td>
-          <td class="text-center">Date B</td>
-          <td class="text-center">Day B</td>
-          <td class="text-center">Time B</td>
-          <td>Detail B</td>
-        </tr>
+        {% endfor %}
       </table>
       
       {% elif USER_TYPE == 'nurse' %}

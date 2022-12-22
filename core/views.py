@@ -7,19 +7,15 @@ import logging
 
 @app.route('/')
 def landing_page():
-    logging.debug(f'Landing page')
     db = get_db()
     email = None
-    logging.debug(f'Landing page 2')
     if 'jwt' in session:
-        logging.debug(f'Landing page 3')
         email = get_session_key()
         if db.hgetall(email):
             pass
         else:
             redirect('/logout')
     
-    logging.debug(f'Landing page end')
     return render_template('home.html', Name="Home", EMAIL=email)
 
 

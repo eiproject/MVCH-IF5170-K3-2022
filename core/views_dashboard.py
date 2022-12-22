@@ -183,7 +183,36 @@ def history_consultation():
     consultation_history = []
     nurse_schedule_history = {}
 
-    if user_type in [UserType.PATIENT, UserType.PHYSICIAN]:
+    if user_type == UserType.PHYSICIAN:
+        appointment_ids = db.smembers(appointment_key)
+        appointment_ids = [int(a) for a in appointment_ids]
+        appointment_ids.sort()
+
+        for app_id in appointment_ids:
+            app_key = CreateAppointmentKey(region_id, app_id)
+            app_data = db.hgetall(app_key)
+            sch_id = int(app_data[b'schedule_id'])
+            
+            sch_key = CreateScheduleKey(region_id, sch_id)
+            sch_data = db.hgetall(sch_key)
+            end = sch_data[b'end'].decode('utf-8')
+            end_datetime = datetime.strptime(end, DATE_FORMAT)
+
+            if end_datetime < get_now_datetime(region_id):
+                patient_id = app_data[b'patient_id'].decode('utf-8')
+                patient_name = get_user_fullname(db, region_id, patient_id, UserType.PATIENT)
+
+                start = sch_data[b'start'].decode('utf-8')
+                start_date = datetime.strptime(start, DATE_FORMAT)
+
+                day = start_date.strftime('%A')
+                time = start_date.strftime('%H:%M')
+                date = start_date.strftime('%Y-%m-%d')
+                consultation_history.append([
+                    patient_name, '', day, date, time
+                ])
+
+    elif user_type == UserType.PATIENT:
         appointment_ids = db.smembers(appointment_key)
         appointment_ids = [int(a) for a in appointment_ids]
         appointment_ids.sort()
