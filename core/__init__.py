@@ -8,6 +8,8 @@ from flask_bcrypt import Bcrypt
 
 from flask_jwt_extended import JWTManager
 
+from core.setting import *
+
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 print('BASE_DIR', BASE_DIR)
@@ -33,14 +35,12 @@ jwt = JWTManager(app)
 
 bcrypt = Bcrypt(app)
 
-region_id = 'indo'
+region_id = DB_SETTING['region_id']
 
 def get_db() -> redis.Redis:
     db = None
-    leader = 'redis://34.101.111.202:6379'
-    follower = 'redis://34.135.238.181:6379'
     
-    redis_dbs = [leader, follower]
+    redis_dbs = [DB_SETTING['leader'], DB_SETTING['follower']]
     
     is_ok = True
     counter = 0
