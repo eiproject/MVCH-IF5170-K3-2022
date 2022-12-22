@@ -41,6 +41,6 @@ def internal_error(error):
         'code': 413,
         'status': 'ERROR',
         'data': [
-            {'error': error}
+            {'error': str(error)}
         ]
     }), 413
